@@ -44,6 +44,17 @@ export class Logger {
     }
   }
 
+  pauseSpinner(): void {
+    this.spinner?.stop()
+  }
+
+  resumeSpinner(text?: string): void {
+    if (this.spinner) {
+      if (text) this.spinner.text = text
+      this.spinner.start()
+    }
+  }
+
   startSpinner(text: string): void {
     this.spinner = ora(text).start()
   }
