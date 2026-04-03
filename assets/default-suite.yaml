@@ -28,10 +28,6 @@ apps:
     description: Base development tools (compilers, make, etc.)
     category: [terminal]
     packages:
-      pacman:
-        install: base-devel
-      yay:
-        install: base-devel
       apt:
         install: build-essential
       dnf:
@@ -145,10 +141,6 @@ apps:
     binary: gh
     category: [terminal]
     packages:
-      pacman:
-        install: github-cli
-      yay:
-        install: github-cli
       apt:
         pre:
           - mkdir -p /etc/apt/keyrings
@@ -255,14 +247,6 @@ apps:
     description: C/C++ compiler and LLVM toolchain
     category: [terminal]
     packages:
-      pacman:
-        install: clang
-      yay:
-        install: clang
-      apt:
-        install: clang
-      dnf:
-        install: clang
       brew:
         install: llvm
 
@@ -270,14 +254,6 @@ apps:
     description: Universal application sandboxing and distribution
     category: [terminal]
     packages:
-      pacman:
-        install: flatpak
-      yay:
-        install: flatpak
-      apt:
-        install: flatpak
-      dnf:
-        install: flatpak
       brew:
         install: ~
 
@@ -361,14 +337,6 @@ apps:
     description: Fast file locator (replacement for mlocate)
     category: [terminal]
     packages:
-      pacman:
-        install: plocate
-      yay:
-        install: plocate
-      apt:
-        install: plocate
-      dnf:
-        install: plocate
       brew:
         install: ~
 
@@ -433,11 +401,6 @@ apps:
     description: Knowledge base and note-taking
     category: [desktop]
     packages:
-      yay:
-        install: obsidian
-      pacman:
-        pre:
-          - yay -S obsidian --noconfirm || true
       dnf:
         pre:
           - OBSIDIAN_VERSION=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -oP '(?<="tag_name":\ "v)[^"]*')
@@ -451,12 +414,10 @@ apps:
       brew:
         install: --cask obsidian
 
-  - name: brave
+  - name: brave-browser
     description: Privacy-focused web browser
     category: [desktop]
     packages:
-      pacman:
-        install: brave-browser
       yay:
         install: brave-bin
       apt:
@@ -464,11 +425,9 @@ apps:
           - curl -fsSL https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg | tee /usr/share/keyrings/brave-browser-archive-keyring.gpg > /dev/null
           - echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list
           - apt-get update -y
-        install: brave-browser
       dnf:
         pre:
           - dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
-        install: brave-browser
       brew:
         install: --cask brave-browser
 
@@ -507,10 +466,6 @@ apps:
     description: JetBrains IDE manager
     category: [desktop]
     packages:
-      pacman:
-        install: jetbrains-toolbox
-      yay:
-        install: jetbrains-toolbox
       apt:
         pre:
           - curl -fsSL "https://data.services.jetbrains.com/products/download?platform=linux&code=TBX" -o /tmp/jetbrains-toolbox.tar.gz
@@ -526,14 +481,10 @@ apps:
       brew:
         install: --cask jetbrains-toolbox
 
-  - name: dbeaver
+  - name: dbeaver-ce
     description: Universal database client
     category: [desktop]
     packages:
-      pacman:
-        install: dbeaver-ce
-      yay:
-        install: dbeaver-ce
       apt:
         pre:
           - DBEAVER_VERSION=$(curl -s https://api.github.com/repos/dbeaver/dbeaver/releases/latest | grep -oP '(?<="tag_name":\ ")[^"]*')
@@ -566,10 +517,6 @@ apps:
     description: Open-source password manager
     category: [desktop]
     packages:
-      pacman:
-        install: bitwarden
-      yay:
-        install: bitwarden
       apt:
         pre:
           - curl -fsSL https://vault.bitwarden.com/download/?app=desktop&platform=linux&variant=deb -o /tmp/bitwarden.deb
@@ -585,14 +532,6 @@ apps:
     description: E-book manager and converter
     category: [desktop]
     packages:
-      pacman:
-        install: calibre
-      yay:
-        install: calibre
-      apt:
-        install: calibre
-      dnf:
-        install: calibre
       brew:
         install: --cask calibre
 
@@ -617,14 +556,12 @@ apps:
       brew:
         install: --cask google-chrome
 
-  - name: cursor
+  - name: cursor-bin
     description: AI-powered code editor
     category: [desktop]
     packages:
       pacman:
         install: ~
-      yay:
-        install: cursor-bin
       apt:
         pre:
           - curl -fsSL https://downloader.cursor.sh/linux/appImage/x64 -o /tmp/cursor.AppImage
@@ -644,14 +581,6 @@ apps:
     description: GNU Image Manipulation Program
     category: [desktop]
     packages:
-      pacman:
-        install: gimp
-      yay:
-        install: gimp
-      apt:
-        install: gimp
-      dnf:
-        install: gimp
       brew:
         install: --cask gimp
 
@@ -659,14 +588,6 @@ apps:
     description: GNOME Boxes virtualization app
     category: [desktop]
     packages:
-      pacman:
-        install: gnome-boxes
-      yay:
-        install: gnome-boxes
-      apt:
-        install: gnome-boxes
-      dnf:
-        install: gnome-boxes
       brew:
         install: ~
 
@@ -674,14 +595,6 @@ apps:
     description: Graphical firewall manager (UFW frontend)
     category: [desktop]
     packages:
-      pacman:
-        install: gufw
-      yay:
-        install: gufw
-      apt:
-        install: gufw
-      dnf:
-        install: gufw
       brew:
         install: ~
 
@@ -710,14 +623,6 @@ apps:
     description: Free and open-source video editor
     category: [desktop]
     packages:
-      pacman:
-        install: kdenlive
-      yay:
-        install: kdenlive
-      apt:
-        install: kdenlive
-      dnf:
-        install: kdenlive
       brew:
         install: --cask kdenlive
 
@@ -727,8 +632,6 @@ apps:
     packages:
       pacman:
         install: ~
-      yay:
-        install: lsfg-vk
       apt:
         install: ~
       dnf:
@@ -740,14 +643,6 @@ apps:
     description: Open gaming platform for Linux
     category: [desktop]
     packages:
-      pacman:
-        install: lutris
-      yay:
-        install: lutris
-      apt:
-        install: lutris
-      dnf:
-        install: lutris
       brew:
         install: ~
 
@@ -755,14 +650,6 @@ apps:
     description: Simple image editor
     category: [desktop]
     packages:
-      pacman:
-        install: pinta
-      yay:
-        install: pinta
-      apt:
-        install: pinta
-      dnf:
-        install: pinta
       brew:
         install: ~
 
@@ -770,10 +657,6 @@ apps:
     description: Container management GUI for Podman
     category: [desktop]
     packages:
-      pacman:
-        install: podman-desktop
-      yay:
-        install: podman-desktop
       apt:
         pre:
           - flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -793,8 +676,6 @@ apps:
     packages:
       pacman:
         install: ~
-      yay:
-        install: protonplus
       apt:
         install: ~
       dnf:
@@ -806,10 +687,6 @@ apps:
     description: Gaming platform by Valve
     category: [desktop]
     packages:
-      pacman:
-        install: steam
-      yay:
-        install: steam
       apt:
         install: steam-installer
       dnf:
@@ -823,10 +700,6 @@ apps:
     description: Tk GUI toolkit (Python plotting support)
     category: [desktop]
     packages:
-      pacman:
-        install: tk
-      yay:
-        install: tk
       apt:
         install: python3-tk
       dnf:
@@ -834,18 +707,10 @@ apps:
       brew:
         install: python-tk
 
-  - name: xournal-app
+  - name: xournalpp
     description: Xournal++ note-taking and PDF annotation app
     binary: xournalpp
     category: [desktop]
     packages:
-      pacman:
-        install: xournalpp
-      yay:
-        install: xournalpp
-      apt:
-        install: xournalpp
-      dnf:
-        install: xournalpp
       brew:
         install: --cask xournal++
