@@ -13,16 +13,16 @@ const desktopCtx: RuntimeContext = {
   config: {
     apps: [
       {
-        name: "alacritty",
-        description: "Terminal emulator",
+        name: "fake-desktop-app",
+        description: "Fake desktop app for testing",
         tags: ["desktop"],
-        packages: { pacman: { install: "alacritty" } },
+        packages: { pacman: { install: "fake-desktop-app-xyz" } },
       },
       {
-        name: "neovim",
-        description: "Editor",
+        name: "fake-terminal-app",
+        description: "Fake terminal app for testing",
         tags: ["terminal"],
-        packages: { pacman: { install: "neovim" } },
+        packages: { pacman: { install: "fake-terminal-app-xyz" } },
       },
     ],
   },
@@ -49,7 +49,7 @@ describe("DesktopKernel", () => {
     const processed: string[] = []
     const kernel = new DesktopKernel(logger, { onAppProcessed: (n) => processed.push(n) })
     await kernel.execute(desktopCtx)
-    expect(processed).toContain("alacritty")
-    expect(processed).not.toContain("neovim")
+    expect(processed).toContain("fake-desktop-app")
+    expect(processed).not.toContain("fake-terminal-app")
   })
 })

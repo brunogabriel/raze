@@ -43,6 +43,7 @@ apps:
 
   - name: neovim
     description: Modal text editor
+    binary: nvim
     tags: [terminal]
     packages:
       apt:

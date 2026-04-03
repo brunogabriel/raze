@@ -13,19 +13,19 @@ const archCtx: RuntimeContext = {
   config: {
     apps: [
       {
-        name: "neovim",
-        description: "Editor",
+        name: "fake-terminal-app",
+        description: "Fake terminal app for testing",
         tags: ["terminal"],
         packages: {
-          pacman: { install: "neovim" },
-          apt: { pre: ["add-apt-repository ppa:neovim-ppa/unstable -y"], install: "neovim" },
+          pacman: { install: "fake-terminal-app-xyz" },
+          apt: { install: "fake-terminal-app-xyz" },
         },
       },
       {
-        name: "alacritty",
-        description: "Terminal",
+        name: "fake-desktop-app",
+        description: "Fake desktop app for testing",
         tags: ["desktop"],
-        packages: { pacman: { install: "alacritty" } },
+        packages: { pacman: { install: "fake-desktop-app-xyz" } },
       },
     ],
   },
@@ -54,8 +54,8 @@ describe("PackageKernel", () => {
       onAppProcessed: (name) => processed.push(name),
     })
     await kernel.execute(archCtx)
-    expect(processed).toContain("neovim")
-    expect(processed).not.toContain("alacritty")
+    expect(processed).toContain("fake-terminal-app")
+    expect(processed).not.toContain("fake-desktop-app")
   })
 
   it("skips app when package manager entry is missing", async () => {

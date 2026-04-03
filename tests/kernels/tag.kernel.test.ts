@@ -13,16 +13,16 @@ const ctx: RuntimeContext = {
   config: {
     apps: [
       {
-        name: "neovim",
-        description: "Editor",
+        name: "fake-terminal-app",
+        description: "Fake terminal app for testing",
         tags: ["terminal"],
-        packages: { pacman: { install: "neovim" } },
+        packages: { pacman: { install: "fake-terminal-app-xyz" } },
       },
       {
-        name: "alacritty",
-        description: "Terminal emulator",
+        name: "fake-desktop-app",
+        description: "Fake desktop app for testing",
         tags: ["desktop"],
-        packages: { pacman: { install: "alacritty" } },
+        packages: { pacman: { install: "fake-desktop-app-xyz" } },
       },
     ],
   },
@@ -39,8 +39,8 @@ describe("TagKernel", () => {
     const processed: string[] = []
     const kernel = new TestKernel(logger, { onAppProcessed: (n) => processed.push(n) })
     await kernel.execute(ctx)
-    expect(processed).toContain("neovim")
-    expect(processed).not.toContain("alacritty")
+    expect(processed).toContain("fake-terminal-app")
+    expect(processed).not.toContain("fake-desktop-app")
   })
 
   it("calls onAppSkipped when package manager entry is missing", async () => {
@@ -51,12 +51,12 @@ describe("TagKernel", () => {
     }
     const kernel = new TestKernel(logger, { onAppSkipped: (n) => skipped.push(n) })
     await kernel.execute(missingCtx)
-    expect(skipped).toContain("neovim")
+    expect(skipped).toContain("fake-terminal-app")
   })
 
   it("installMessage defaults to 'Installing <name>...'", () => {
     const kernel = new TestKernel(logger)
-    expect((kernel as any).installMessage("neovim")).toBe("Installing neovim...")
+    expect((kernel as any).installMessage("fake-terminal-app")).toBe("Installing fake-terminal-app...")
   })
 
   it("continues installing remaining apps when one fails", async () => {
