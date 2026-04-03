@@ -47,10 +47,12 @@ export abstract class TagKernel implements IKernel {
         if (!result.success) throw new Error(`pre-step failed for ${app.name}: ${result.stderr}`)
       }
 
-      const installCmd = `${INSTALL_COMMANDS[pm]} ${steps.install!}`
-      this.logger.verbose(`install: ${installCmd}`)
-      const result = await runCommand(installCmd, { dryRun })
-      if (!result.success) throw new Error(`install failed for ${app.name}: ${result.stderr}`)
+      if (steps.install != null) {
+        const installCmd = `${INSTALL_COMMANDS[pm]} ${steps.install}`
+        this.logger.verbose(`install: ${installCmd}`)
+        const result = await runCommand(installCmd, { dryRun })
+        if (!result.success) throw new Error(`install failed for ${app.name}: ${result.stderr}`)
+      }
 
       for (const post of steps.post ?? []) {
         this.logger.verbose(`post: ${post}`)

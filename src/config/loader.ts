@@ -15,7 +15,7 @@ function expandDefaults(apps: AppDefinition[]): AppDefinition[] {
       const entry = packages[pm]
       if (!entry) {
         packages[pm] = { install: app.name }
-      } else if (!entry.install) {
+      } else if (!("install" in entry)) {
         packages[pm] = { ...entry, install: app.name }
       }
     }

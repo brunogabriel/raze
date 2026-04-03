@@ -5,7 +5,7 @@ export type AppTag = "terminal" | "desktop" | "driver" | "optional"
 
 export interface PackageSteps {
   pre?: string[]
-  install?: string
+  install?: string | null
   post?: string[]
 }
 

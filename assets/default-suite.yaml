@@ -90,6 +90,11 @@ apps:
       apt:
         pre:
           - sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes
+        install: ~
+      dnf:
+        pre:
+          - sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes
+        install: ~
 
   - name: lazygit
     description: Terminal UI for git
@@ -101,10 +106,10 @@ apps:
       apt:
         pre:
           - LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name":\ "v\K[^"]*')
-          - curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-          - tar xf lazygit.tar.gz lazygit
-          - install lazygit /usr/local/bin
-        install: lazygit
+          - curl -Lo /tmp/lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+          - tar xf /tmp/lazygit.tar.gz -C /tmp lazygit
+          - install /tmp/lazygit /usr/local/bin
+        install: ~
 
   - name: btop
     description: Resource monitor
@@ -314,13 +319,13 @@ apps:
       dnf:
         pre:
           - OBSIDIAN_VERSION=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -oP '(?<="tag_name":\ "v)[^"]*')
-          - curl -Lo obsidian.rpm "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/Obsidian-${OBSIDIAN_VERSION}.rpm"
-        install: obsidian.rpm
+          - curl -Lo /tmp/obsidian.rpm "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/Obsidian-${OBSIDIAN_VERSION}.rpm"
+        install: /tmp/obsidian.rpm
       apt:
         pre:
           - OBSIDIAN_VERSION=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -oP '(?<="tag_name":\ "v)[^"]*')
-          - curl -Lo obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/obsidian_${OBSIDIAN_VERSION}_amd64.deb"
-        install: obsidian.deb
+          - curl -Lo /tmp/obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/obsidian_${OBSIDIAN_VERSION}_amd64.deb"
+        install: /tmp/obsidian.deb
       brew:
         install: --cask obsidian
 
