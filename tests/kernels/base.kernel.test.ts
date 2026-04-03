@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test"
-import type { IKernel, KernelResult, RuntimeContext } from "../../src/kernels/base.kernel"
+import type { IKernel, KernelResult, RuntimeContext, AppDefinition } from "../../src/kernels/base.kernel"
 
 describe("base.kernel types", () => {
   it("KernelResult has correct shape", () => {
@@ -31,5 +31,28 @@ describe("base.kernel types", () => {
       duration: 50,
     }
     expect(result.status).toBe("failed")
+  })
+})
+
+describe("AppDefinition types", () => {
+  it("AppDefinition accepts optional binary field", () => {
+    const app: AppDefinition = {
+      name: "ripgrep",
+      description: "Fast grep alternative",
+      tags: ["terminal"],
+      packages: { pacman: { install: "ripgrep" } },
+      binary: "rg",
+    }
+    expect(app.binary).toBe("rg")
+  })
+
+  it("AppDefinition binary is undefined when not set", () => {
+    const app: AppDefinition = {
+      name: "neovim",
+      description: "Editor",
+      tags: ["terminal"],
+      packages: { pacman: { install: "neovim" } },
+    }
+    expect(app.binary).toBeUndefined()
   })
 })

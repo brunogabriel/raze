@@ -14,6 +14,7 @@ export interface AppDefinition {
   description: string
   tags: AppTag[]
   packages: Partial<Record<Exclude<PackageManager, "unknown">, PackageSteps>>
+  binary?: string
 }
 
 export interface RazeConfig {
