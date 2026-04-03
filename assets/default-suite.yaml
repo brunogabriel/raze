@@ -3,8 +3,9 @@
 # Each app may define packages per package manager.
 # Each package entry supports:
 #   pre: (optional) list of commands to run before install
-#   install: (required) package name(s) passed to the package manager
+#   install: (optional) package name(s) — defaults to app name if omitted
 #   post: (optional) list of commands to run after install
+# If a package manager is omitted entirely, the loader installs using the app name.
 
 apps:
   # --- Terminal apps ---
@@ -13,105 +14,35 @@ apps:
     description: Modal text editor
     tags: [terminal]
     packages:
-      pacman:
-        install: neovim
-      yay:
-        install: neovim
-      dnf:
-        install: neovim
       apt:
         pre:
           - add-apt-repository ppa:neovim-ppa/unstable -y
           - apt-get update -y
-        install: neovim
-      brew:
-        install: neovim
 
   - name: tmux
     description: Terminal multiplexer
     tags: [terminal]
-    packages:
-      pacman:
-        install: tmux
-      yay:
-        install: tmux
-      dnf:
-        install: tmux
-      apt:
-        install: tmux
-      brew:
-        install: tmux
 
   - name: zsh
     description: Z shell
     tags: [terminal]
-    packages:
-      pacman:
-        install: zsh
-      yay:
-        install: zsh
-      dnf:
-        install: zsh
-      apt:
-        install: zsh
-      brew:
-        install: zsh
 
   - name: fzf
     description: Fuzzy finder
     tags: [terminal]
-    packages:
-      pacman:
-        install: fzf
-      yay:
-        install: fzf
-      dnf:
-        install: fzf
-      apt:
-        install: fzf
-      brew:
-        install: fzf
 
   - name: ripgrep
     description: Fast grep alternative
     tags: [terminal]
-    packages:
-      pacman:
-        install: ripgrep
-      yay:
-        install: ripgrep
-      dnf:
-        install: ripgrep
-      apt:
-        install: ripgrep
-      brew:
-        install: ripgrep
 
   - name: bat
     description: cat with syntax highlighting
     tags: [terminal]
-    packages:
-      pacman:
-        install: bat
-      yay:
-        install: bat
-      dnf:
-        install: bat
-      apt:
-        install: bat
-      brew:
-        install: bat
 
   - name: eza
     description: Modern ls replacement
     tags: [terminal]
     packages:
-      pacman:
-        install: eza
-      yay:
-        install: eza
-      dnf:
-        install: eza
       apt:
         pre:
           - apt-get install -y gpg
@@ -119,40 +50,22 @@ apps:
           - wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
           - echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | tee /etc/apt/sources.list.d/gierens.list
           - apt-get update -y
-        install: eza
-      brew:
-        install: eza
 
   - name: starship
     description: Cross-shell prompt
     tags: [terminal]
     packages:
-      pacman:
-        install: starship
-      yay:
-        install: starship
-      dnf:
-        install: starship
       apt:
-        # No apt package — install via official script
         pre:
           - sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes
-        install: starship
-      brew:
-        install: starship
 
   - name: lazygit
     description: Terminal UI for git
     tags: [terminal]
     packages:
-      pacman:
-        install: lazygit
-      yay:
-        install: lazygit
       dnf:
         pre:
           - dnf copr enable atim/lazygit -y
-        install: lazygit
       apt:
         pre:
           - LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name":\ "v\K[^"]*')
@@ -160,20 +73,16 @@ apps:
           - tar xf lazygit.tar.gz lazygit
           - install lazygit /usr/local/bin
         install: lazygit
-      brew:
-        install: lazygit
 
   - name: docker
     description: Container runtime
     tags: [terminal]
     packages:
       pacman:
-        install: docker
         post:
           - systemctl enable --now docker
           - usermod -aG docker $USER
       yay:
-        install: docker
         post:
           - systemctl enable --now docker
           - usermod -aG docker $USER
@@ -205,14 +114,6 @@ apps:
     description: GPU-accelerated terminal emulator
     tags: [desktop]
     packages:
-      pacman:
-        install: alacritty
-      yay:
-        install: alacritty
-      dnf:
-        install: alacritty
-      apt:
-        install: alacritty
       brew:
         install: --cask alacritty
 
@@ -220,14 +121,6 @@ apps:
     description: Web browser
     tags: [desktop]
     packages:
-      pacman:
-        install: firefox
-      yay:
-        install: firefox
-      dnf:
-        install: firefox
-      apt:
-        install: firefox
       brew:
         install: --cask firefox
 
@@ -235,14 +128,6 @@ apps:
     description: Media player
     tags: [desktop]
     packages:
-      pacman:
-        install: vlc
-      yay:
-        install: vlc
-      dnf:
-        install: vlc
-      apt:
-        install: vlc
       brew:
         install: --cask vlc
 
@@ -255,7 +140,6 @@ apps:
       pacman:
         pre:
           - yay -S obsidian --noconfirm || true
-        install: obsidian
       dnf:
         pre:
           - OBSIDIAN_VERSION=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -oP '(?<="tag_name":\ "v)[^"]*')
