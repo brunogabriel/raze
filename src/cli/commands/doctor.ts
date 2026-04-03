@@ -1,6 +1,11 @@
 import type { Command } from "commander"
 import { runCommand } from "../../utils/shell"
 import type { BuildContextFn, GlobalOpts } from "../context"
+import type { AppDefinition } from "../../kernels/base.kernel"
+
+function resolveBinary(app: AppDefinition): string {
+  return app.binary ?? app.name
+}
 
 export function registerDoctor(program: Command, buildContext: BuildContextFn): void {
   program
@@ -17,10 +22,12 @@ export function registerDoctor(program: Command, buildContext: BuildContextFn): 
       console.log(`\nApp Suite:`)
 
       for (const app of ctx.config.apps) {
-        const check = await runCommand(`which ${app.name}`)
+        const binary = resolveBinary(app)
+        const check = await runCommand(`which ${binary}`)
         const status = check.success ? "installed" : "missing"
         const icon = check.success ? "✓" : "✗"
-        console.log(`  ${icon} ${app.name.padEnd(20)} ${status}`)
+        const tags = app.tags.join(", ")
+        console.log(`  ${icon} ${app.name.padEnd(20)} ${tags.padEnd(16)} ${status}`)
       }
     })
 }
