@@ -102,4 +102,11 @@ apps:
     expect(app!.packages.apt?.install).toBe("mytool2")
     expect(app!.packages.pacman?.install).toBe("mytool2")
   })
+
+  it("ripgrep has binary set to 'rg' in default suite", async () => {
+    const config = await loadConfig("/nonexistent/path/suite.yaml")
+    const rg = config.apps.find((a) => a.name === "ripgrep")
+    expect(rg).toBeDefined()
+    expect(rg!.binary).toBe("rg")
+  })
 })

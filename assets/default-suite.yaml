@@ -33,6 +33,7 @@ apps:
 
   - name: ripgrep
     description: Fast grep alternative
+    binary: rg
     tags: [terminal]
 
   - name: bat
