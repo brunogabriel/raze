@@ -60,4 +60,46 @@ apps:
     const config = await loadConfig(overridePath)
     expect(config.apps.some((a) => a.name === "neovim")).toBe(true)
   })
+
+  it("app with no packages declared gets all managers defaulting to app name", async () => {
+    const dir = join(tmpdir(), "raze-test-" + Date.now())
+    mkdirSync(dir, { recursive: true })
+    const overridePath = join(dir, "suite.yaml")
+    writeFileSync(overridePath, `
+apps:
+  - name: mytool
+    description: Test tool
+    tags: [terminal]
+`)
+    const config = await loadConfig(overridePath)
+    const app = config.apps.find((a) => a.name === "mytool")
+    expect(app).toBeDefined()
+    expect(app!.packages.pacman?.install).toBe("mytool")
+    expect(app!.packages.yay?.install).toBe("mytool")
+    expect(app!.packages.dnf?.install).toBe("mytool")
+    expect(app!.packages.apt?.install).toBe("mytool")
+    expect(app!.packages.brew?.install).toBe("mytool")
+  })
+
+  it("apt entry with pre but no install gets install defaulted to app name", async () => {
+    const dir = join(tmpdir(), "raze-test-" + Date.now())
+    mkdirSync(dir, { recursive: true })
+    const overridePath = join(dir, "suite.yaml")
+    writeFileSync(overridePath, `
+apps:
+  - name: mytool2
+    description: Test tool 2
+    tags: [terminal]
+    packages:
+      apt:
+        pre:
+          - apt-get update -y
+`)
+    const config = await loadConfig(overridePath)
+    const app = config.apps.find((a) => a.name === "mytool2")
+    expect(app).toBeDefined()
+    expect(app!.packages.apt?.pre).toEqual(["apt-get update -y"])
+    expect(app!.packages.apt?.install).toBe("mytool2")
+    expect(app!.packages.pacman?.install).toBe("mytool2")
+  })
 })
