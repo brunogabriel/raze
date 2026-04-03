@@ -13,7 +13,7 @@ export interface AppDefinition {
   name: string
   description: string
   category: AppTag[]
-  packages: Partial<Record<Exclude<PackageManager, "unknown">, PackageSteps>>
+  packages: Partial<Record<Exclude<PackageManager, "unknown">, PackageSteps | null>>
   binary?: string
 }
 

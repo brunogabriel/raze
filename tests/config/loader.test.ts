@@ -114,4 +114,31 @@ apps:
     const config = await loadConfig()
     expect(config.apps.length).toBeGreaterThanOrEqual(30)
   })
+
+  it("PM set to null explicitly is not filled in by expandDefaults", async () => {
+    const dir = join(tmpdir(), "raze-test-" + Date.now())
+    mkdirSync(dir, { recursive: true })
+    const overridePath = join(dir, "suite.yaml")
+    writeFileSync(overridePath, `
+apps:
+  - name: aur-only-tool
+    description: Only available on AUR
+    category: [terminal]
+    packages:
+      yay:
+        install: aur-only-tool
+      pacman: ~
+      apt: ~
+      dnf: ~
+      brew: ~
+`)
+    const config = await loadConfig(overridePath)
+    const app = config.apps.find((a) => a.name === "aur-only-tool")
+    expect(app).toBeDefined()
+    expect(app!.packages.yay?.install).toBe("aur-only-tool")
+    expect(app!.packages.pacman).toBeNull()
+    expect(app!.packages.apt).toBeNull()
+    expect(app!.packages.dnf).toBeNull()
+    expect(app!.packages.brew).toBeNull()
+  })
 })

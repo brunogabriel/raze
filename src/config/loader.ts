@@ -12,6 +12,7 @@ function expandDefaults(apps: AppDefinition[]): AppDefinition[] {
   return apps.map(app => {
     const packages: AppDefinition["packages"] = { ...(app.packages ?? {}) }
     for (const pm of ALL_MANAGERS) {
+      if (pm in packages && packages[pm] === null) continue  // explicit null = skip this PM
       const entry = packages[pm]
       if (!entry) {
         packages[pm] = { install: app.name }
