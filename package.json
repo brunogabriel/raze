@@ -1,6 +1,6 @@
 {
   "name": "raze",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Raze Automates Zero-Config Environment",
   "type": "module",
   "bin": {
