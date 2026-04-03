@@ -6,13 +6,15 @@ import { registerSetup } from "./commands/setup"
 import { registerUpdate } from "./commands/update"
 import { registerDoctor } from "./commands/doctor"
 import { registerLangs } from "./commands/langs"
+// @ts-ignore — Bun resolves package.json as object at runtime
+import pkg from "../../package.json"
 
 const program = new Command()
 
 program
   .name("raze")
   .description("Raze Automates Zero-Config Environment")
-  .version("0.1.0")
+  .version(pkg.version)
   .option("--verbose", "detailed output", false)
   .option("--dry-run", "simulate without executing", false)
   .option("--fail-fast", "stop on first kernel failure", false)
