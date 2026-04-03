@@ -9,6 +9,7 @@
   "scripts": {
     "start": "bun run src/cli/index.ts",
     "build": "bun build ./src/cli/index.ts --compile --outfile dist/raze",
+    "build:linux": "bun build ./src/cli/index.ts --compile --target=bun-linux-x64-musl --outfile dist/raze-linux-x64",
     "test": "bun test"
   },
   "dependencies": {

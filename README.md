@@ -15,10 +15,16 @@ Run unit tests:
 bun test
 ```
 
-Build the standalone binary (vbuild):
+Build the standalone binary:
 
 ```
 bun build ./src/cli/index.ts --compile --outfile dist/raze
+```
+
+To build a portable binary that runs on any Linux distro (Fedora, Ubuntu, Debian, etc.) without depending on the host glibc, use the musl target:
+
+```
+bun build ./src/cli/index.ts --compile --target=bun-linux-x64-musl --outfile dist/raze-linux-x64
 ```
 
 After building, make the binary executable and move it to a directory on your PATH, for example:
