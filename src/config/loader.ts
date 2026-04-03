@@ -3,12 +3,18 @@ import { homedir } from "os"
 import { join } from "path"
 import yaml from "js-yaml"
 import type { RazeConfig, AppDefinition } from "../kernels/base.kernel"
-
-const DEFAULT_SUITE_PATH = join(import.meta.dir, "../../assets/default-suite.yaml")
+// @ts-ignore — Bun imports .yaml as object at runtime; bundler embeds as text with [bundler.loaders] ".yaml"="text"
+import defaultSuiteAsset from "../../assets/default-suite.yaml"
 
 function loadDefaultSuite(): RazeConfig {
-  const content = readFileSync(DEFAULT_SUITE_PATH, "utf-8")
-  const parsed = yaml.load(content) as any
+  // At runtime (bun test/run): Bun parses YAML natively → object
+  // In compiled binary (bun build --compile with text loader): embedded string
+  let parsed: any
+  if (typeof defaultSuiteAsset === "string") {
+    parsed = yaml.load(defaultSuiteAsset as string)
+  } else {
+    parsed = defaultSuiteAsset
+  }
   if (!Array.isArray(parsed?.apps)) {
     throw new Error("default-suite.yaml is malformed: missing apps array")
   }

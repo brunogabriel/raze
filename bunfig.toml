@@ -1,2 +1,5 @@
 [test]
 preload = [""]
+
+[bundler.loaders]
+".yaml" = "text"
