@@ -109,4 +109,9 @@ apps:
     expect(rg).toBeDefined()
     expect(rg!.binary).toBe("rg")
   })
+
+  it("default suite has at least 30 apps", async () => {
+    const config = await loadConfig()
+    expect(config.apps.length).toBeGreaterThanOrEqual(30)
+  })
 })

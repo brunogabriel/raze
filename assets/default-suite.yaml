@@ -10,6 +10,37 @@
 apps:
   # --- Terminal apps ---
 
+  # Base dependencies (installed first)
+
+  - name: curl
+    description: Command-line tool for transferring data with URLs
+    tags: [terminal]
+
+  - name: git
+    description: Distributed version control system
+    tags: [terminal]
+
+  - name: unzip
+    description: Extraction utility for zip archives
+    tags: [terminal]
+
+  - name: base-devel
+    description: Base development tools (compilers, make, etc.)
+    tags: [terminal]
+    packages:
+      pacman:
+        install: base-devel
+      yay:
+        install: base-devel
+      apt:
+        install: build-essential
+      dnf:
+        install: gcc make automake
+      brew:
+        install: ~
+
+  # Terminal tools
+
   - name: neovim
     description: Modal text editor
     tags: [terminal]
@@ -75,6 +106,147 @@ apps:
           - install lazygit /usr/local/bin
         install: lazygit
 
+  - name: btop
+    description: Resource monitor
+    tags: [terminal]
+
+  - name: fastfetch
+    description: Fast system information tool
+    tags: [terminal]
+
+  - name: fd
+    description: Simple, fast alternative to find
+    binary: fd
+    tags: [terminal]
+    packages:
+      apt:
+        install: fd-find
+
+  - name: jq
+    description: Command-line JSON processor
+    tags: [terminal]
+
+  - name: tldr
+    description: Simplified man pages
+    tags: [terminal]
+
+  - name: zoxide
+    description: Smarter cd command
+    tags: [terminal]
+
+  - name: github-cli
+    description: GitHub CLI
+    binary: gh
+    tags: [terminal]
+    packages:
+      pacman:
+        install: github-cli
+      yay:
+        install: github-cli
+      apt:
+        pre:
+          - mkdir -p /etc/apt/keyrings
+          - wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
+          - chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+          - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list
+          - apt-get update -y
+        install: gh
+      dnf:
+        pre:
+          - dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+        install: gh
+      brew:
+        install: gh
+
+  - name: lazydocker
+    description: Terminal UI for Docker
+    tags: [terminal]
+    packages:
+      pacman:
+        install: lazydocker
+      yay:
+        install: lazydocker-bin
+      apt:
+        pre:
+          - curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+        install: ~
+      dnf:
+        pre:
+          - curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+        install: ~
+      brew:
+        install: lazydocker
+
+  - name: opencode
+    description: AI coding assistant
+    tags: [terminal]
+    packages:
+      pacman:
+        pre:
+          - curl -fsSL https://opencode.ai/install | bash
+        install: ~
+      yay:
+        pre:
+          - curl -fsSL https://opencode.ai/install | bash
+        install: ~
+      apt:
+        pre:
+          - curl -fsSL https://opencode.ai/install | bash
+        install: ~
+      dnf:
+        pre:
+          - curl -fsSL https://opencode.ai/install | bash
+        install: ~
+      brew:
+        pre:
+          - curl -fsSL https://opencode.ai/install | bash
+        install: ~
+
+  - name: uv
+    description: Fast Python package and project manager
+    tags: [terminal]
+    packages:
+      pacman:
+        pre:
+          - curl -LsSf https://astral.sh/uv/install.sh | sh
+        install: ~
+      yay:
+        pre:
+          - curl -LsSf https://astral.sh/uv/install.sh | sh
+        install: ~
+      apt:
+        pre:
+          - curl -LsSf https://astral.sh/uv/install.sh | sh
+        install: ~
+      dnf:
+        pre:
+          - curl -LsSf https://astral.sh/uv/install.sh | sh
+        install: ~
+      brew:
+        pre:
+          - curl -LsSf https://astral.sh/uv/install.sh | sh
+        install: ~
+
+  - name: mise
+    description: Dev tools and language version manager
+    binary: mise
+    tags: [terminal]
+    packages:
+      pacman:
+        install: mise
+      yay:
+        install: mise
+      dnf:
+        pre:
+          - curl https://mise.run | sh
+        install: ~
+      apt:
+        pre:
+          - curl https://mise.run | sh
+        install: ~
+      brew:
+        install: mise
+
   - name: docker
     description: Container runtime
     tags: [terminal]
@@ -108,26 +280,6 @@ apps:
           - usermod -aG docker $USER
       brew:
         install: --cask docker
-
-  - name: mise
-    description: Dev tools and language version manager
-    binary: mise
-    tags: [terminal]
-    packages:
-      pacman:
-        install: mise
-      yay:
-        install: mise
-      dnf:
-        pre:
-          - curl https://mise.run | sh
-        install: ~
-      apt:
-        pre:
-          - curl https://mise.run | sh
-        install: ~
-      brew:
-        install: mise
 
   # --- Desktop apps ---
 
@@ -173,3 +325,93 @@ apps:
         install: obsidian.deb
       brew:
         install: --cask obsidian
+
+  - name: brave
+    description: Privacy-focused web browser
+    tags: [desktop]
+    packages:
+      pacman:
+        install: brave-browser
+      yay:
+        install: brave-bin
+      apt:
+        pre:
+          - curl -fsSL https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg | tee /usr/share/keyrings/brave-browser-archive-keyring.gpg > /dev/null
+          - echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list
+          - apt-get update -y
+        install: brave-browser
+      dnf:
+        pre:
+          - dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+        install: brave-browser
+      brew:
+        install: --cask brave-browser
+
+  - name: vscode
+    description: Visual Studio Code editor
+    binary: code
+    tags: [desktop]
+    packages:
+      pacman:
+        install: code
+      yay:
+        install: visual-studio-code-bin
+      apt:
+        pre:
+          - curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/packages.microsoft.gpg
+          - echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | tee /etc/apt/sources.list.d/vscode.list
+          - apt-get update -y
+        install: code
+      dnf:
+        pre:
+          - rpm --import https://packages.microsoft.com/keys/microsoft.asc
+          - echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | tee /etc/yum.repos.d/vscode.repo
+          - dnf check-update
+        install: code
+      brew:
+        install: --cask visual-studio-code
+
+  - name: kitty
+    description: GPU-accelerated terminal emulator
+    tags: [desktop]
+    packages:
+      brew:
+        install: --cask kitty
+
+  - name: jetbrains-toolbox
+    description: JetBrains IDE manager
+    tags: [desktop]
+    packages:
+      pacman:
+        install: jetbrains-toolbox
+      yay:
+        install: jetbrains-toolbox
+      apt:
+        pre:
+          - curl -fsSL "https://data.services.jetbrains.com/products/download?platform=linux&code=TBA" -o /tmp/jetbrains-toolbox.tar.gz
+          - tar xzf /tmp/jetbrains-toolbox.tar.gz -C /tmp
+          - mv /tmp/jetbrains-toolbox-*/jetbrains-toolbox /usr/local/bin/jetbrains-toolbox
+        install: ~
+      dnf:
+        pre:
+          - curl -fsSL "https://data.services.jetbrains.com/products/download?platform=linux&code=TBA" -o /tmp/jetbrains-toolbox.tar.gz
+          - tar xzf /tmp/jetbrains-toolbox.tar.gz -C /tmp
+          - mv /tmp/jetbrains-toolbox-*/jetbrains-toolbox /usr/local/bin/jetbrains-toolbox
+        install: ~
+      brew:
+        install: --cask jetbrains-toolbox
+
+  - name: dbeaver
+    description: Universal database client
+    tags: [desktop]
+    packages:
+      pacman:
+        install: dbeaver
+      yay:
+        install: dbeaver
+      apt:
+        install: dbeaver-ce
+      dnf:
+        install: dbeaver-ce
+      brew:
+        install: --cask dbeaver-community
