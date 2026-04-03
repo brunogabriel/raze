@@ -1,0 +1,30 @@
+# Raze default language suite
+# Languages are installed via mise (https://mise.jdx.dev)
+# Fields:
+#   name:           display name
+#   description:    short description
+#   misePlugin:     plugin name used in: mise use --global <misePlugin>@<miseVersion>
+#   miseVersion:    version to install (e.g. "latest", "21", "temurin-21")
+#   misePluginUrl:  (optional) external plugin URL — used when plugin is not built-in to mise
+
+langs:
+  - name: node
+    description: JavaScript runtime
+    misePlugin: node
+    miseVersion: latest
+
+  - name: java
+    description: Java runtime (Eclipse Temurin)
+    misePlugin: java
+    miseVersion: latest
+
+  - name: dotnet
+    description: .NET runtime and SDK
+    misePlugin: dotnet
+    miseVersion: latest
+
+  - name: flutter
+    description: Flutter SDK
+    misePlugin: flutter
+    misePluginUrl: https://github.com/oae/asdf-flutter
+    miseVersion: latest
