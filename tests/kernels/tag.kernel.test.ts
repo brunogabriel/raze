@@ -58,4 +58,63 @@ describe("TagKernel", () => {
     const kernel = new TestKernel(logger)
     expect((kernel as any).installMessage("neovim")).toBe("Installing neovim...")
   })
+
+  it("continues installing remaining apps when one fails", async () => {
+    const failLogger = new Logger({ verbose: false, dryRun: false })
+    const failCtx: RuntimeContext = {
+      ...ctx,
+      packageManager: "pacman",
+      config: {
+        apps: [
+          {
+            name: "will-fail",
+            description: "Fails on install",
+            tags: ["terminal"],
+            packages: { pacman: { install: "this-package-does-not-exist-xyz" } },
+          },
+          {
+            name: "will-succeed",
+            description: "Succeeds (dry-run via null install)",
+            tags: ["terminal"],
+            packages: { pacman: { install: null } },
+          },
+        ],
+      },
+    }
+    const processed: string[] = []
+    const failed: string[] = []
+    const kernel = new TestKernel(failLogger, {
+      onAppProcessed: (n) => processed.push(n),
+      onAppFailed: (n) => failed.push(n),
+    })
+    await expect(kernel.execute(failCtx)).rejects.toThrow()
+    expect(failed).toContain("will-fail")
+    expect(processed).toContain("will-succeed")
+  })
+
+  it("throws a consolidated error listing all failed apps", async () => {
+    const failLogger = new Logger({ verbose: false, dryRun: false })
+    const failCtx: RuntimeContext = {
+      ...ctx,
+      packageManager: "pacman",
+      config: {
+        apps: [
+          {
+            name: "app-a",
+            description: "Fails",
+            tags: ["terminal"],
+            packages: { pacman: { install: "nonexistent-app-a" } },
+          },
+          {
+            name: "app-b",
+            description: "Fails",
+            tags: ["terminal"],
+            packages: { pacman: { install: "nonexistent-app-b" } },
+          },
+        ],
+      },
+    }
+    const kernel = new TestKernel(failLogger)
+    await expect(kernel.execute(failCtx)).rejects.toThrow(/app-a.*app-b|app-b.*app-a/s)
+  })
 })

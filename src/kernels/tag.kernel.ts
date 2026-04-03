@@ -6,6 +6,7 @@ import { INSTALL_COMMANDS } from "../utils/package-managers"
 export interface TagKernelOptions {
   onAppProcessed?: (name: string) => void
   onAppSkipped?: (name: string) => void
+  onAppFailed?: (name: string, reason: string) => void
 }
 
 export abstract class TagKernel implements IKernel {
@@ -29,6 +30,7 @@ export abstract class TagKernel implements IKernel {
     const pm = ctx.packageManager as Exclude<PackageManager, "unknown">
     const apps = ctx.config.apps.filter((a) => a.tags.includes(this.tag))
     const dryRun = this.logger.isDryRun
+    const failures: { name: string; reason: string }[] = []
 
     for (const app of apps) {
       const steps = app.packages[pm]
@@ -41,26 +43,38 @@ export abstract class TagKernel implements IKernel {
 
       this.logger.info(this.installMessage(app.name))
 
-      for (const pre of steps.pre ?? []) {
-        this.logger.verbose(`pre: ${pre}`)
-        const result = await runCommand(pre, { dryRun })
-        if (!result.success) throw new Error(`pre-step failed for ${app.name}: ${result.stderr}`)
-      }
+      try {
+        for (const pre of steps.pre ?? []) {
+          this.logger.verbose(`pre: ${pre}`)
+          const result = await runCommand(pre, { dryRun })
+          if (!result.success) throw new Error(`pre-step failed: ${result.stderr}`)
+        }
 
-      if (steps.install != null) {
-        const installCmd = `${INSTALL_COMMANDS[pm]} ${steps.install}`
-        this.logger.verbose(`install: ${installCmd}`)
-        const result = await runCommand(installCmd, { dryRun })
-        if (!result.success) throw new Error(`install failed for ${app.name}: ${result.stderr}`)
-      }
+        if (steps.install != null) {
+          const installCmd = `${INSTALL_COMMANDS[pm]} ${steps.install}`
+          this.logger.verbose(`install: ${installCmd}`)
+          const result = await runCommand(installCmd, { dryRun })
+          if (!result.success) throw new Error(`install failed: ${result.stderr}`)
+        }
 
-      for (const post of steps.post ?? []) {
-        this.logger.verbose(`post: ${post}`)
-        const postResult = await runCommand(post, { dryRun })
-        if (!postResult.success) throw new Error(`post-step failed for ${app.name}: ${postResult.stderr}`)
-      }
+        for (const post of steps.post ?? []) {
+          this.logger.verbose(`post: ${post}`)
+          const postResult = await runCommand(post, { dryRun })
+          if (!postResult.success) throw new Error(`post-step failed: ${postResult.stderr}`)
+        }
 
-      this.options.onAppProcessed?.(app.name)
+        this.options.onAppProcessed?.(app.name)
+      } catch (err: unknown) {
+        const reason = err instanceof Error ? err.message : String(err)
+        this.logger.warn(`Failed to install ${app.name}: ${reason}`)
+        this.options.onAppFailed?.(app.name, reason)
+        failures.push({ name: app.name, reason })
+      }
+    }
+
+    if (failures.length > 0) {
+      const list = failures.map((f) => `  - ${f.name}: ${f.reason}`).join("\n")
+      throw new Error(`${failures.length} app(s) failed to install:\n${list}`)
     }
   }
 }
