@@ -162,8 +162,6 @@ apps:
     description: Terminal UI for Docker
     tags: [terminal]
     packages:
-      pacman:
-        install: lazydocker
       yay:
         install: lazydocker-bin
       apt:
@@ -388,13 +386,13 @@ apps:
         install: jetbrains-toolbox
       apt:
         pre:
-          - curl -fsSL "https://data.services.jetbrains.com/products/download?platform=linux&code=TBA" -o /tmp/jetbrains-toolbox.tar.gz
+          - curl -fsSL "https://data.services.jetbrains.com/products/download?platform=linux&code=TBX" -o /tmp/jetbrains-toolbox.tar.gz
           - tar xzf /tmp/jetbrains-toolbox.tar.gz -C /tmp
           - mv /tmp/jetbrains-toolbox-*/jetbrains-toolbox /usr/local/bin/jetbrains-toolbox
         install: ~
       dnf:
         pre:
-          - curl -fsSL "https://data.services.jetbrains.com/products/download?platform=linux&code=TBA" -o /tmp/jetbrains-toolbox.tar.gz
+          - curl -fsSL "https://data.services.jetbrains.com/products/download?platform=linux&code=TBX" -o /tmp/jetbrains-toolbox.tar.gz
           - tar xzf /tmp/jetbrains-toolbox.tar.gz -C /tmp
           - mv /tmp/jetbrains-toolbox-*/jetbrains-toolbox /usr/local/bin/jetbrains-toolbox
         install: ~
@@ -406,12 +404,18 @@ apps:
     tags: [desktop]
     packages:
       pacman:
-        install: dbeaver
+        install: dbeaver-ce
       yay:
-        install: dbeaver
+        install: dbeaver-ce
       apt:
-        install: dbeaver-ce
+        pre:
+          - DBEAVER_VERSION=$(curl -s https://api.github.com/repos/dbeaver/dbeaver/releases/latest | grep -oP '(?<="tag_name":\ ")[^"]*')
+          - curl -Lo /tmp/dbeaver.deb "https://github.com/dbeaver/dbeaver/releases/latest/download/dbeaver-ce_${DBEAVER_VERSION}_amd64.deb"
+        install: /tmp/dbeaver.deb
       dnf:
-        install: dbeaver-ce
+        pre:
+          - DBEAVER_VERSION=$(curl -s https://api.github.com/repos/dbeaver/dbeaver/releases/latest | grep -oP '(?<="tag_name":\ ")[^"]*')
+          - curl -Lo /tmp/dbeaver.rpm "https://github.com/dbeaver/dbeaver/releases/latest/download/dbeaver-ce_${DBEAVER_VERSION}_x86_64.rpm"
+        install: /tmp/dbeaver.rpm
       brew:
         install: --cask dbeaver-community
