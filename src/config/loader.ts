@@ -1,11 +1,23 @@
 import { existsSync, readFileSync } from "fs"
 import { homedir } from "os"
 import { join } from "path"
+import yaml from "js-yaml"
 import type { RazeConfig, AppDefinition } from "../kernels/base.kernel"
-import { defaultSuite } from "./default-suite"
+
+const DEFAULT_SUITE_PATH = join(import.meta.dir, "../../assets/default-suite.yaml")
+
+function loadDefaultSuite(): RazeConfig {
+  const content = readFileSync(DEFAULT_SUITE_PATH, "utf-8")
+  const parsed = yaml.load(content) as any
+  if (!Array.isArray(parsed?.apps)) {
+    throw new Error("default-suite.yaml is malformed: missing apps array")
+  }
+  return { apps: parsed.apps as AppDefinition[] }
+}
 
 export async function loadConfig(overridePath?: string): Promise<RazeConfig> {
-  const path = overridePath ?? join(homedir(), ".config", "raze", "suite.toml")
+  const defaultSuite = loadDefaultSuite()
+  const path = overridePath ?? join(homedir(), ".config", "raze", "suite.yaml")
 
   if (!existsSync(path)) {
     return defaultSuite
@@ -13,19 +25,18 @@ export async function loadConfig(overridePath?: string): Promise<RazeConfig> {
 
   try {
     const content = readFileSync(path, "utf-8")
-    const parsed = parseSuiteToml(content)
+    const parsed = parseOverrideYaml(content)
     return mergeConfigs(defaultSuite, parsed)
   } catch {
+    console.warn(`[raze] Warning: could not parse override file at ${path}, using defaults.`)
     return defaultSuite
   }
 }
 
-function parseSuiteToml(content: string): Partial<RazeConfig> {
-  // Minimal TOML parser for suite overrides using Bun's built-in TOML support
-  // Only supports top-level [[apps]] array entries
+function parseOverrideYaml(content: string): Partial<RazeConfig> {
   try {
-    const parsed = Bun.TOML.parse(content) as any
-    if (Array.isArray(parsed.apps)) {
+    const parsed = yaml.load(content) as any
+    if (Array.isArray(parsed?.apps)) {
       return { apps: parsed.apps as AppDefinition[] }
     }
     return {}
