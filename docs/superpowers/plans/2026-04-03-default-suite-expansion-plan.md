@@ -1,0 +1,491 @@
+# Default Suite Expansion Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Expand `assets/default-suite.yaml` with base dependencies (`curl`, `git`, `unzip`, `base-devel`) and all apps from the arch-setup project — both terminal and desktop.
+
+**Architecture:** Pure YAML change. No code changes. The existing `loadConfig` + `expandDefaults` loader handles the new entries transparently. Tests in `loader.test.ts` already verify the suite loads without errors. A smoke test verifying counts is added to catch regressions.
+
+**Tech Stack:** Bun, TypeScript, `bun:test`, YAML
+
+---
+
+## File Map
+
+| Action | Path | Responsibility |
+|--------|------|----------------|
+| Modify | `assets/default-suite.yaml` | Add base deps + new terminal + new desktop apps |
+| Modify | `tests/config/loader.test.ts` | Add count smoke test to catch regressions |
+
+---
+
+### Task 1: Add base dependencies and new terminal apps to default-suite.yaml
+
+**Files:**
+- Modify: `assets/default-suite.yaml`
+- Modify: `tests/config/loader.test.ts`
+
+- [ ] **Step 1: Add count smoke test to loader.test.ts**
+
+Open `tests/config/loader.test.ts` and append this test to the existing `describe("loadConfig")` block:
+
+```typescript
+it("default suite has at least 30 apps", async () => {
+  const config = await loadConfig()
+  expect(config.apps.length).toBeGreaterThanOrEqual(30)
+})
+```
+
+- [ ] **Step 2: Run test to verify it currently fails**
+
+```bash
+bun test tests/config/loader.test.ts
+```
+
+Expected: the new test FAILS — current suite has fewer than 30 apps.
+
+- [ ] **Step 3: Replace `assets/default-suite.yaml` with the full expanded version**
+
+Replace the entire file with the following content:
+
+```yaml
+# Raze default app suite
+# Tags: terminal | desktop | driver | optional
+# Each app may define packages per package manager.
+# Each package entry supports:
+#   pre: (optional) list of commands to run before install
+#   install: (optional) package name(s) — defaults to app name if omitted
+#   post: (optional) list of commands to run after install
+# If a package manager is omitted entirely, the loader installs using the app name.
+
+apps:
+  # --- Terminal apps ---
+
+  # Base dependencies (installed first)
+
+  - name: curl
+    description: Command-line tool for transferring data with URLs
+    tags: [terminal]
+
+  - name: git
+    description: Distributed version control system
+    tags: [terminal]
+
+  - name: unzip
+    description: Extraction utility for zip archives
+    tags: [terminal]
+
+  - name: base-devel
+    description: Base development tools (compilers, make, etc.)
+    tags: [terminal]
+    packages:
+      pacman:
+        install: base-devel
+      yay:
+        install: base-devel
+      apt:
+        install: build-essential
+      dnf:
+        install: gcc make automake
+      brew:
+        install: ~
+
+  # Terminal tools
+
+  - name: neovim
+    description: Modal text editor
+    tags: [terminal]
+    packages:
+      apt:
+        pre:
+          - add-apt-repository ppa:neovim-ppa/unstable -y
+          - apt-get update -y
+
+  - name: tmux
+    description: Terminal multiplexer
+    tags: [terminal]
+
+  - name: zsh
+    description: Z shell
+    tags: [terminal]
+
+  - name: fzf
+    description: Fuzzy finder
+    tags: [terminal]
+
+  - name: ripgrep
+    description: Fast grep alternative
+    binary: rg
+    tags: [terminal]
+
+  - name: bat
+    description: cat with syntax highlighting
+    tags: [terminal]
+
+  - name: eza
+    description: Modern ls replacement
+    tags: [terminal]
+    packages:
+      apt:
+        pre:
+          - apt-get install -y gpg
+          - mkdir -p /etc/apt/keyrings
+          - wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
+          - echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | tee /etc/apt/sources.list.d/gierens.list
+          - apt-get update -y
+
+  - name: starship
+    description: Cross-shell prompt
+    tags: [terminal]
+    packages:
+      apt:
+        pre:
+          - sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes
+
+  - name: lazygit
+    description: Terminal UI for git
+    tags: [terminal]
+    packages:
+      dnf:
+        pre:
+          - dnf copr enable atim/lazygit -y
+      apt:
+        pre:
+          - LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name":\ "v\K[^"]*')
+          - curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+          - tar xf lazygit.tar.gz lazygit
+          - install lazygit /usr/local/bin
+        install: lazygit
+
+  - name: btop
+    description: Resource monitor
+    tags: [terminal]
+
+  - name: fastfetch
+    description: Fast system information tool
+    tags: [terminal]
+
+  - name: fd
+    description: Simple, fast alternative to find
+    binary: fd
+    tags: [terminal]
+    packages:
+      apt:
+        install: fd-find
+
+  - name: jq
+    description: Command-line JSON processor
+    tags: [terminal]
+
+  - name: tldr
+    description: Simplified man pages
+    tags: [terminal]
+
+  - name: zoxide
+    description: Smarter cd command
+    tags: [terminal]
+
+  - name: github-cli
+    description: GitHub CLI
+    binary: gh
+    tags: [terminal]
+    packages:
+      pacman:
+        install: github-cli
+      yay:
+        install: github-cli
+      apt:
+        pre:
+          - mkdir -p /etc/apt/keyrings
+          - wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
+          - chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+          - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list
+          - apt-get update -y
+        install: gh
+      dnf:
+        pre:
+          - dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+        install: gh
+      brew:
+        install: gh
+
+  - name: lazydocker
+    description: Terminal UI for Docker
+    tags: [terminal]
+    packages:
+      pacman:
+        install: lazydocker
+      yay:
+        install: lazydocker-bin
+      apt:
+        pre:
+          - curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+        install: ~
+      dnf:
+        pre:
+          - curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+        install: ~
+      brew:
+        install: lazydocker
+
+  - name: opencode
+    description: AI coding assistant
+    tags: [terminal]
+    packages:
+      pacman:
+        pre:
+          - curl -fsSL https://opencode.ai/install | bash
+        install: ~
+      yay:
+        pre:
+          - curl -fsSL https://opencode.ai/install | bash
+        install: ~
+      apt:
+        pre:
+          - curl -fsSL https://opencode.ai/install | bash
+        install: ~
+      dnf:
+        pre:
+          - curl -fsSL https://opencode.ai/install | bash
+        install: ~
+      brew:
+        pre:
+          - curl -fsSL https://opencode.ai/install | bash
+        install: ~
+
+  - name: uv
+    description: Fast Python package and project manager
+    tags: [terminal]
+    packages:
+      pacman:
+        pre:
+          - curl -LsSf https://astral.sh/uv/install.sh | sh
+        install: ~
+      yay:
+        pre:
+          - curl -LsSf https://astral.sh/uv/install.sh | sh
+        install: ~
+      apt:
+        pre:
+          - curl -LsSf https://astral.sh/uv/install.sh | sh
+        install: ~
+      dnf:
+        pre:
+          - curl -LsSf https://astral.sh/uv/install.sh | sh
+        install: ~
+      brew:
+        pre:
+          - curl -LsSf https://astral.sh/uv/install.sh | sh
+        install: ~
+
+  - name: mise
+    description: Dev tools and language version manager
+    binary: mise
+    tags: [terminal]
+    packages:
+      pacman:
+        install: mise
+      yay:
+        install: mise
+      dnf:
+        pre:
+          - curl https://mise.run | sh
+        install: ~
+      apt:
+        pre:
+          - curl https://mise.run | sh
+        install: ~
+      brew:
+        install: mise
+
+  - name: docker
+    description: Container runtime
+    tags: [terminal]
+    packages:
+      pacman:
+        post:
+          - systemctl enable --now docker
+          - usermod -aG docker $USER
+      yay:
+        post:
+          - systemctl enable --now docker
+          - usermod -aG docker $USER
+      dnf:
+        pre:
+          - dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+        install: docker-ce docker-ce-cli containerd.io
+        post:
+          - systemctl enable --now docker
+          - usermod -aG docker $USER
+      apt:
+        pre:
+          - apt-get install -y ca-certificates curl
+          - install -m 0755 -d /etc/apt/keyrings
+          - curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+          - chmod a+r /etc/apt/keyrings/docker.asc
+          - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list
+          - apt-get update -y
+        install: docker-ce docker-ce-cli containerd.io
+        post:
+          - systemctl enable --now docker
+          - usermod -aG docker $USER
+      brew:
+        install: --cask docker
+
+  # --- Desktop apps ---
+
+  - name: alacritty
+    description: GPU-accelerated terminal emulator
+    tags: [desktop]
+    packages:
+      brew:
+        install: --cask alacritty
+
+  - name: firefox
+    description: Web browser
+    tags: [desktop]
+    packages:
+      brew:
+        install: --cask firefox
+
+  - name: vlc
+    description: Media player
+    tags: [desktop]
+    packages:
+      brew:
+        install: --cask vlc
+
+  - name: obsidian
+    description: Knowledge base and note-taking
+    tags: [desktop]
+    packages:
+      yay:
+        install: obsidian
+      pacman:
+        pre:
+          - yay -S obsidian --noconfirm || true
+      dnf:
+        pre:
+          - OBSIDIAN_VERSION=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -oP '(?<="tag_name":\ "v)[^"]*')
+          - curl -Lo obsidian.rpm "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/Obsidian-${OBSIDIAN_VERSION}.rpm"
+        install: obsidian.rpm
+      apt:
+        pre:
+          - OBSIDIAN_VERSION=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -oP '(?<="tag_name":\ "v)[^"]*')
+          - curl -Lo obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/obsidian_${OBSIDIAN_VERSION}_amd64.deb"
+        install: obsidian.deb
+      brew:
+        install: --cask obsidian
+
+  - name: brave
+    description: Privacy-focused web browser
+    tags: [desktop]
+    packages:
+      pacman:
+        install: brave-browser
+      yay:
+        install: brave-bin
+      apt:
+        pre:
+          - curl -fsSL https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg | tee /usr/share/keyrings/brave-browser-archive-keyring.gpg > /dev/null
+          - echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list
+          - apt-get update -y
+        install: brave-browser
+      dnf:
+        pre:
+          - dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+        install: brave-browser
+      brew:
+        install: --cask brave-browser
+
+  - name: vscode
+    description: Visual Studio Code editor
+    binary: code
+    tags: [desktop]
+    packages:
+      pacman:
+        install: code
+      yay:
+        install: visual-studio-code-bin
+      apt:
+        pre:
+          - curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/packages.microsoft.gpg
+          - echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | tee /etc/apt/sources.list.d/vscode.list
+          - apt-get update -y
+        install: code
+      dnf:
+        pre:
+          - rpm --import https://packages.microsoft.com/keys/microsoft.asc
+          - echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | tee /etc/yum.repos.d/vscode.repo
+          - dnf check-update
+        install: code
+      brew:
+        install: --cask visual-studio-code
+
+  - name: kitty
+    description: GPU-accelerated terminal emulator
+    tags: [desktop]
+    packages:
+      brew:
+        install: --cask kitty
+
+  - name: jetbrains-toolbox
+    description: JetBrains IDE manager
+    tags: [desktop]
+    packages:
+      pacman:
+        install: jetbrains-toolbox
+      yay:
+        install: jetbrains-toolbox
+      apt:
+        pre:
+          - curl -fsSL "https://data.services.jetbrains.com/products/download?platform=linux&code=TBA" -o /tmp/jetbrains-toolbox.tar.gz
+          - tar xzf /tmp/jetbrains-toolbox.tar.gz -C /tmp
+          - mv /tmp/jetbrains-toolbox-*/jetbrains-toolbox /usr/local/bin/jetbrains-toolbox
+        install: ~
+      dnf:
+        pre:
+          - curl -fsSL "https://data.services.jetbrains.com/products/download?platform=linux&code=TBA" -o /tmp/jetbrains-toolbox.tar.gz
+          - tar xzf /tmp/jetbrains-toolbox.tar.gz -C /tmp
+          - mv /tmp/jetbrains-toolbox-*/jetbrains-toolbox /usr/local/bin/jetbrains-toolbox
+        install: ~
+      brew:
+        install: --cask jetbrains-toolbox
+
+  - name: dbeaver
+    description: Universal database client
+    tags: [desktop]
+    packages:
+      pacman:
+        install: dbeaver
+      yay:
+        install: dbeaver
+      apt:
+        install: dbeaver-ce
+      dnf:
+        install: dbeaver-ce
+      brew:
+        install: --cask dbeaver-community
+```
+
+- [ ] **Step 4: Run all tests to verify they pass**
+
+```bash
+bun test
+```
+
+Expected: all tests pass (71 + 1 new = 72), 0 fail.
+The new `loader.test.ts` count test should now pass since the suite has ≥30 apps.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add assets/default-suite.yaml tests/config/loader.test.ts
+git commit -m "feat: expand default suite with base deps and arch-setup apps"
+```
+
+- [ ] **Step 6: Push**
+
+```bash
+git push
+```
