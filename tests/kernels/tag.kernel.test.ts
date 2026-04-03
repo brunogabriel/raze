@@ -117,4 +117,49 @@ describe("TagKernel", () => {
     const kernel = new TestKernel(failLogger)
     await expect(kernel.execute(failCtx)).rejects.toThrow(/app-a.*app-b|app-b.*app-a/s)
   })
+
+  it("skips app and logs when binary is found in PATH", async () => {
+    const skipped: string[] = []
+    // 'sh' is guaranteed to be in PATH on any unix system
+    const ctxWithBinary: RuntimeContext = {
+      ...ctx,
+      config: {
+        apps: [
+          {
+            name: "myapp",
+            description: "App with known binary",
+            tags: ["terminal"],
+            binary: "sh",
+            packages: { pacman: { install: "myapp" } },
+          },
+        ],
+      },
+    }
+    const kernel = new TestKernel(logger, { onAppSkipped: (n) => skipped.push(n) })
+    await kernel.execute(ctxWithBinary)
+    expect(skipped).toContain("myapp")
+  })
+
+  it("skips app and logs when package is registered in PM", async () => {
+    const skipped: string[] = []
+    // 'bun' is installed on this machine via pacman or directly — use a real installed package
+    // We use 'which' to find a real installed package name: bash is always present
+    const ctxWithPkg: RuntimeContext = {
+      ...ctx,
+      packageManager: "pacman",
+      config: {
+        apps: [
+          {
+            name: "bash",
+            description: "Already installed shell",
+            tags: ["terminal"],
+            packages: { pacman: { install: "bash" } },
+          },
+        ],
+      },
+    }
+    const kernel = new TestKernel(logger, { onAppSkipped: (n) => skipped.push(n) })
+    await kernel.execute(ctxWithPkg)
+    expect(skipped).toContain("bash")
+  })
 })

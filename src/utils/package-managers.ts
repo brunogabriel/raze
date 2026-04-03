@@ -15,3 +15,11 @@ export const UPDATE_COMMANDS: Record<Exclude<PackageManager, "unknown">, string>
   apt: "apt-get update -y && apt-get upgrade -y",
   brew: "brew upgrade",
 }
+
+export const CHECK_COMMANDS: Record<Exclude<PackageManager, "unknown">, string> = {
+  pacman: "pacman -Q",
+  yay: "pacman -Q",
+  dnf: "rpm -q",
+  apt: "dpkg -l",
+  brew: "brew list",
+}

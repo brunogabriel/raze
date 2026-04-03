@@ -50,9 +50,16 @@ describe("DriverKernel", () => {
 
   it("only processes driver-tagged apps", async () => {
     const processed: string[] = []
-    const kernel = new DriverKernel(logger, { onAppProcessed: (n) => processed.push(n) })
+    const skipped: string[] = []
+    const kernel = new DriverKernel(logger, {
+      onAppProcessed: (n) => processed.push(n),
+      onAppSkipped: (n) => skipped.push(n),
+    })
     await kernel.execute(archCtx)
-    expect(processed).toContain("nvidia-driver")
+    // nvidia-driver must be either processed or skipped (already installed) — never ignored
+    expect([...processed, ...skipped]).toContain("nvidia-driver")
+    // neovim is terminal-tagged and must never be touched by DriverKernel
     expect(processed).not.toContain("neovim")
+    expect(skipped).not.toContain("neovim")
   })
 })
