@@ -22,7 +22,7 @@ export class SetupKernel implements IKernel {
     // Change default shell to zsh if available
     if (await isBinaryInstalled("zsh")) {
       this.logger.info("Setting zsh as default shell...")
-      const zshPath = await runCommand("which zsh", { dryRun: false })
+      const zshPath = await runCommand("which zsh", { dryRun: false, stream: false })
       await runCommand(`chsh -s ${zshPath.stdout.trim()}`, { dryRun })
     }
 

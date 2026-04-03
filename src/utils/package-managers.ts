@@ -26,7 +26,7 @@ export const CHECK_COMMANDS: Record<Exclude<PackageManager, "unknown">, string> 
 }
 
 export async function isBinaryInstalled(binary: string): Promise<boolean> {
-  const result = await runCommand(`which ${binary}`, { dryRun: false })
+  const result = await runCommand(`which ${binary}`, { dryRun: false, stream: false })
   return result.success
 }
 
@@ -39,6 +39,6 @@ export async function isAppInstalled(
   }
   const pkgName = app.packages[pm]?.install ?? app.name
   if (!pkgName) return false
-  const result = await runCommand(`${CHECK_COMMANDS[pm]} ${pkgName}`, { dryRun: false })
+  const result = await runCommand(`${CHECK_COMMANDS[pm]} ${pkgName}`, { dryRun: false, stream: false })
   return result.success
 }

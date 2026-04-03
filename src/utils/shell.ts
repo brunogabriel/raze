@@ -1,9 +1,10 @@
-import { $ } from "bun"
+import { spawn } from "bun"
 
 export interface CommandOptions {
   shell?: boolean
   dryRun?: boolean
   cwd?: string
+  stream?: boolean
 }
 
 export interface CommandResult {
@@ -14,6 +15,15 @@ export interface CommandResult {
   dryRun?: boolean
 }
 
+let activeProc: ReturnType<typeof spawn> | null = null
+
+process.on("SIGINT", () => {
+  if (activeProc) {
+    activeProc.kill()
+  }
+  process.exit(130)
+})
+
 export async function runCommand(
   command: string,
   options: CommandOptions = {}
@@ -23,19 +33,38 @@ export async function runCommand(
   }
 
   try {
-    const proc = await $`sh -c ${command}`.cwd(options.cwd ?? process.cwd()).quiet()
-    return {
-      success: proc.exitCode === 0,
-      exitCode: proc.exitCode,
-      stdout: proc.stdout.toString(),
-      stderr: proc.stderr.toString(),
+    const stream = options.stream ?? true
+    const proc = spawn(["sh", "-c", command], {
+      cwd: options.cwd ?? process.cwd(),
+      stdout: stream ? "inherit" : "pipe",
+      stderr: stream ? "inherit" : "pipe",
+    })
+
+    activeProc = proc
+
+    let stdout = ""
+    let stderr = ""
+
+    if (stream) {
+      const exitCode = await proc.exited
+      activeProc = null
+      return { success: exitCode === 0, exitCode, stdout, stderr }
+    } else {
+      const [out, err, exitCode] = await Promise.all([
+        new Response(proc.stdout).text(),
+        new Response(proc.stderr).text(),
+        proc.exited,
+      ])
+      activeProc = null
+      return { success: exitCode === 0, exitCode, stdout: out, stderr: err }
     }
   } catch (err: any) {
+    activeProc = null
     return {
       success: false,
       exitCode: err.exitCode ?? 1,
-      stdout: err.stdout?.toString() ?? "",
-      stderr: err.stderr?.toString() ?? String(err),
+      stdout: "",
+      stderr: String(err),
     }
   }
 }

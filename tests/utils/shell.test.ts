@@ -3,20 +3,20 @@ import { runCommand, type CommandResult } from "../../src/utils/shell"
 
 describe("runCommand", () => {
   it("runs a successful command and returns stdout", async () => {
-    const result = await runCommand("echo hello")
+    const result = await runCommand("echo hello", { stream: false })
     expect(result.success).toBe(true)
     expect(result.stdout.trim()).toBe("hello")
     expect(result.exitCode).toBe(0)
   })
 
   it("returns failure for non-zero exit commands", async () => {
-    const result = await runCommand("exit 1", { shell: true })
+    const result = await runCommand("exit 1", { stream: false })
     expect(result.success).toBe(false)
     expect(result.exitCode).toBe(1)
   })
 
   it("captures stderr", async () => {
-    const result = await runCommand("echo error >&2", { shell: true })
+    const result = await runCommand("echo error >&2", { stream: false })
     expect(result.stderr).toBeDefined()
   })
 
