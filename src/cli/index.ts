@@ -5,6 +5,7 @@ import { registerInstall } from "./commands/install"
 import { registerSetup } from "./commands/setup"
 import { registerUpdate } from "./commands/update"
 import { registerDoctor } from "./commands/doctor"
+import { registerLangs } from "./commands/langs"
 
 const program = new Command()
 
@@ -21,5 +22,6 @@ registerInstall(program, buildContext)
 registerSetup(program, buildContext)
 registerUpdate(program, buildContext)
 registerDoctor(program, buildContext)
+registerLangs(program)
 
 program.parse()

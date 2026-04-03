@@ -109,6 +109,26 @@ apps:
       brew:
         install: --cask docker
 
+  - name: mise
+    description: Dev tools and language version manager
+    binary: mise
+    tags: [terminal]
+    packages:
+      pacman:
+        install: mise
+      yay:
+        install: mise
+      dnf:
+        pre:
+          - curl https://mise.run | sh
+        install: ~
+      apt:
+        pre:
+          - curl https://mise.run | sh
+        install: ~
+      brew:
+        install: mise
+
   # --- Desktop apps ---
 
   - name: alacritty
