@@ -1,5 +1,7 @@
 import { describe, it, expect } from "bun:test"
 import type { LangDefinition, LangContext } from "../../src/kernels/lang/lang.kernel"
+import { LangKernel } from "../../src/kernels/lang/lang.kernel"
+import { Logger } from "../../src/utils/logger"
 
 describe("LangDefinition types", () => {
   it("LangDefinition has required fields", () => {
@@ -31,5 +33,40 @@ describe("LangDefinition types", () => {
       langs: [],
     }
     expect(Array.isArray(ctx.langs)).toBe(true)
+  })
+})
+
+const logger = new Logger({ verbose: false, dryRun: true })
+
+const ctx: LangContext = {
+  langs: [
+    {
+      name: "node",
+      description: "JavaScript runtime",
+      misePlugin: "node",
+      miseVersion: "latest",
+    },
+    {
+      name: "flutter",
+      description: "Flutter SDK",
+      misePlugin: "flutter",
+      miseVersion: "latest",
+      misePluginUrl: "https://github.com/oae/asdf-flutter",
+    },
+  ],
+}
+
+describe("LangKernel", () => {
+  it("execute completes without throwing in dry-run mode", async () => {
+    const kernel = new LangKernel(logger)
+    await expect(kernel.execute(ctx)).resolves.toBeUndefined()
+  })
+
+  it("calls onLangProcessed for each lang in dry-run mode", async () => {
+    const processed: string[] = []
+    const kernel = new LangKernel(logger, { onLangProcessed: (n) => processed.push(n) })
+    await kernel.execute(ctx)
+    expect(processed).toContain("node")
+    expect(processed).toContain("flutter")
   })
 })
