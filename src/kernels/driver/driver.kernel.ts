@@ -51,7 +51,7 @@ export class DriverKernel implements IKernel {
         if (!result.success) throw new Error(`pre-step failed for ${app.name}: ${result.stderr}`)
       }
 
-      const installCmd = `${INSTALL_COMMANDS[pm]} ${steps.install}`
+      const installCmd = `${INSTALL_COMMANDS[pm]} ${steps.install!}`
       this.logger.verbose(`install: ${installCmd}`)
       const result = await runCommand(installCmd, { dryRun })
       if (!result.success) throw new Error(`install failed for ${app.name}: ${result.stderr}`)

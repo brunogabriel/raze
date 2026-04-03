@@ -6,6 +6,23 @@ import type { RazeConfig, AppDefinition } from "../kernels/base.kernel"
 // @ts-ignore — Bun imports .yaml as object at runtime; bundler embeds as text with [bundler.loaders] ".yaml"="text"
 import defaultSuiteAsset from "../../assets/default-suite.yaml"
 
+const ALL_MANAGERS = ["pacman", "yay", "dnf", "apt", "brew"] as const
+
+function expandDefaults(apps: AppDefinition[]): AppDefinition[] {
+  return apps.map(app => {
+    const packages: AppDefinition["packages"] = { ...(app.packages ?? {}) }
+    for (const pm of ALL_MANAGERS) {
+      const entry = packages[pm]
+      if (!entry) {
+        packages[pm] = { install: app.name }
+      } else if (!entry.install) {
+        packages[pm] = { ...entry, install: app.name }
+      }
+    }
+    return { ...app, packages }
+  })
+}
+
 function loadDefaultSuite(): RazeConfig {
   // At runtime (bun test/run): Bun parses YAML natively → object
   // In compiled binary (bun build --compile with text loader): embedded string
@@ -18,7 +35,7 @@ function loadDefaultSuite(): RazeConfig {
   if (!Array.isArray(parsed?.apps)) {
     throw new Error("default-suite.yaml is malformed: missing apps array")
   }
-  return { apps: parsed.apps as AppDefinition[] }
+  return { apps: expandDefaults(parsed.apps as AppDefinition[]) }
 }
 
 export async function loadConfig(overridePath?: string): Promise<RazeConfig> {
@@ -58,5 +75,5 @@ function mergeConfigs(base: RazeConfig, override: Partial<RazeConfig>): RazeConf
   for (const app of base.apps) merged.set(app.name, app)
   for (const app of override.apps) merged.set(app.name, app)
 
-  return { apps: Array.from(merged.values()) }
+  return { apps: expandDefaults(Array.from(merged.values())) }
 }
