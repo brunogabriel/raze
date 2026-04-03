@@ -1,18 +1,11 @@
 import type { IKernel, RuntimeContext, PackageManager } from "../base.kernel"
 import type { Logger } from "../../utils/logger"
 import { runCommand } from "../../utils/shell"
+import { INSTALL_COMMANDS } from "../../utils/package-managers"
 
 interface DriverKernelOptions {
   onAppProcessed?: (name: string) => void
   onAppSkipped?: (name: string) => void
-}
-
-const INSTALL_COMMANDS: Record<Exclude<PackageManager, "unknown">, string> = {
-  pacman: "pacman -S --noconfirm",
-  yay: "yay -S --noconfirm",
-  dnf: "dnf install -y",
-  apt: "apt-get install -y",
-  brew: "brew install",
 }
 
 export class DriverKernel implements IKernel {
