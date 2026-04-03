@@ -1,6 +1,7 @@
 import type { IKernel, RuntimeContext } from "../base.kernel"
 import type { Logger } from "../../utils/logger"
 import { runCommand } from "../../utils/shell"
+import { isBinaryInstalled } from "../../utils/package-managers"
 
 export class SetupKernel implements IKernel {
   name = "SetupKernel"
@@ -19,9 +20,9 @@ export class SetupKernel implements IKernel {
     this.logger.info("Running setup steps...")
 
     // Change default shell to zsh if available
-    const zshPath = await runCommand("which zsh", { dryRun: false })
-    if (zshPath.success) {
+    if (await isBinaryInstalled("zsh")) {
       this.logger.info("Setting zsh as default shell...")
+      const zshPath = await runCommand("which zsh", { dryRun: false })
       await runCommand(`chsh -s ${zshPath.stdout.trim()}`, { dryRun })
     }
 

@@ -1,7 +1,7 @@
-import type { IKernel, RuntimeContext, PackageManager, AppTag, AppDefinition } from "./base.kernel"
+import type { IKernel, RuntimeContext, PackageManager, AppTag } from "./base.kernel"
 import type { Logger } from "../utils/logger"
 import { runCommand } from "../utils/shell"
-import { INSTALL_COMMANDS, CHECK_COMMANDS } from "../utils/package-managers"
+import { INSTALL_COMMANDS, isAppInstalled } from "../utils/package-managers"
 
 export interface TagKernelOptions {
   onAppProcessed?: (name: string) => void
@@ -26,21 +26,6 @@ export abstract class TagKernel implements IKernel {
     return `Installing ${name}...`
   }
 
-  private async isInstalled(app: AppDefinition, pm: Exclude<PackageManager, "unknown">): Promise<boolean> {
-    // Prefer binary check (works for curl-installed apps too)
-    if (app.binary) {
-      const result = await runCommand(`which ${app.binary}`, { dryRun: false })
-      return result.success
-    }
-
-    // Fall back to PM query using the install package name or app name
-    const pkgName = app.packages[pm]?.install ?? app.name
-    if (!pkgName) return false
-    const checkCmd = `${CHECK_COMMANDS[pm]} ${pkgName}`
-    const result = await runCommand(checkCmd, { dryRun: false })
-    return result.success
-  }
-
   async execute(ctx: RuntimeContext): Promise<void> {
     const pm = ctx.packageManager as Exclude<PackageManager, "unknown">
     const apps = ctx.config.apps.filter((a) => a.tags.includes(this.tag))
@@ -56,7 +41,7 @@ export abstract class TagKernel implements IKernel {
         continue
       }
 
-      if (await this.isInstalled(app, pm)) {
+      if (await isAppInstalled(app, pm)) {
         this.logger.info(`Already installed: ${app.name}`)
         this.options.onAppSkipped?.(app.name)
         continue

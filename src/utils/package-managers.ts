@@ -1,4 +1,5 @@
-import type { PackageManager } from "../kernels/base.kernel"
+import type { PackageManager, AppDefinition } from "../kernels/base.kernel"
+import { runCommand } from "./shell"
 
 export const INSTALL_COMMANDS: Record<Exclude<PackageManager, "unknown">, string> = {
   pacman: "pacman -S --noconfirm",
@@ -22,4 +23,22 @@ export const CHECK_COMMANDS: Record<Exclude<PackageManager, "unknown">, string> 
   dnf: "rpm -q",
   apt: "dpkg -l",
   brew: "brew list",
+}
+
+export async function isBinaryInstalled(binary: string): Promise<boolean> {
+  const result = await runCommand(`which ${binary}`, { dryRun: false })
+  return result.success
+}
+
+export async function isAppInstalled(
+  app: AppDefinition,
+  pm: Exclude<PackageManager, "unknown">
+): Promise<boolean> {
+  if (app.binary) {
+    return isBinaryInstalled(app.binary)
+  }
+  const pkgName = app.packages[pm]?.install ?? app.name
+  if (!pkgName) return false
+  const result = await runCommand(`${CHECK_COMMANDS[pm]} ${pkgName}`, { dryRun: false })
+  return result.success
 }
