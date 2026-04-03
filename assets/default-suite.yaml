@@ -251,6 +251,127 @@ apps:
       brew:
         install: mise
 
+  - name: clang
+    description: C/C++ compiler and LLVM toolchain
+    category: [terminal]
+    packages:
+      pacman:
+        install: clang
+      yay:
+        install: clang
+      apt:
+        install: clang
+      dnf:
+        install: clang
+      brew:
+        install: llvm
+
+  - name: flatpak
+    description: Universal application sandboxing and distribution
+    category: [terminal]
+    packages:
+      pacman:
+        install: flatpak
+      yay:
+        install: flatpak
+      apt:
+        install: flatpak
+      dnf:
+        install: flatpak
+      brew:
+        install: ~
+
+  - name: nerd-fonts
+    description: Nerd Fonts collection (Cascadia, FiraCode, JetBrains Mono, Meslo, Hack)
+    category: [terminal]
+    packages:
+      pacman:
+        install: ttf-cascadia-mono-nerd ttf-firacode-nerd ttf-meslo-nerd ttf-jetbrains-mono ttf-hack
+      yay:
+        install: ttf-cascadia-mono-nerd ttf-firacode-nerd ttf-meslo-nerd ttf-jetbrains-mono ttf-hack
+      apt:
+        pre:
+          - mkdir -p /usr/local/share/fonts
+          - curl -fLo /tmp/FiraCode.zip https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip && unzip -o /tmp/FiraCode.zip -d /usr/local/share/fonts/FiraCodeNF
+          - curl -fLo /tmp/JetBrainsMono.zip https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip && unzip -o /tmp/JetBrainsMono.zip -d /usr/local/share/fonts/JetBrainsMonoNF
+          - fc-cache -fv
+        install: ~
+      dnf:
+        pre:
+          - mkdir -p /usr/local/share/fonts
+          - curl -fLo /tmp/FiraCode.zip https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip && unzip -o /tmp/FiraCode.zip -d /usr/local/share/fonts/FiraCodeNF
+          - curl -fLo /tmp/JetBrainsMono.zip https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip && unzip -o /tmp/JetBrainsMono.zip -d /usr/local/share/fonts/JetBrainsMonoNF
+          - fc-cache -fv
+        install: ~
+      brew:
+        install: font-fira-code-nerd-font font-jetbrains-mono-nerd-font font-meslo-lg-nerd-font font-hack-nerd-font
+
+  - name: github-copilot-cli
+    description: GitHub Copilot CLI assistant
+    binary: gh
+    category: [terminal]
+    packages:
+      pacman:
+        pre:
+          - curl -fsSL https://gh.io/copilot-install | bash
+        install: ~
+      yay:
+        pre:
+          - curl -fsSL https://gh.io/copilot-install | bash
+        install: ~
+      apt:
+        pre:
+          - curl -fsSL https://gh.io/copilot-install | bash
+        install: ~
+      dnf:
+        pre:
+          - curl -fsSL https://gh.io/copilot-install | bash
+        install: ~
+      brew:
+        pre:
+          - curl -fsSL https://gh.io/copilot-install | bash
+        install: ~
+
+  - name: maestro
+    description: Mobile UI testing framework CLI
+    category: [terminal]
+    packages:
+      pacman:
+        pre:
+          - curl -fsSL https://get.maestro.mobile.dev | bash
+        install: ~
+      yay:
+        pre:
+          - curl -fsSL https://get.maestro.mobile.dev | bash
+        install: ~
+      apt:
+        pre:
+          - curl -fsSL https://get.maestro.mobile.dev | bash
+        install: ~
+      dnf:
+        pre:
+          - curl -fsSL https://get.maestro.mobile.dev | bash
+        install: ~
+      brew:
+        pre:
+          - curl -fsSL https://get.maestro.mobile.dev | bash
+        install: ~
+
+  - name: plocate
+    description: Fast file locator (replacement for mlocate)
+    category: [terminal]
+    packages:
+      pacman:
+        install: plocate
+      yay:
+        install: plocate
+      apt:
+        install: plocate
+      dnf:
+        install: plocate
+      brew:
+        install: ~
+
   - name: docker
     description: Container runtime
     category: [terminal]
@@ -425,3 +546,306 @@ apps:
         install: /tmp/dbeaver.rpm
       brew:
         install: --cask dbeaver-community
+
+  - name: antigravity
+    description: Antigravity window manager effect
+    category: [desktop]
+    packages:
+      pacman:
+        install: ~
+      yay:
+        install: antigravity
+      apt:
+        install: ~
+      dnf:
+        install: ~
+      brew:
+        install: ~
+
+  - name: bitwarden
+    description: Open-source password manager
+    category: [desktop]
+    packages:
+      pacman:
+        install: bitwarden
+      yay:
+        install: bitwarden
+      apt:
+        pre:
+          - curl -fsSL https://vault.bitwarden.com/download/?app=desktop&platform=linux&variant=deb -o /tmp/bitwarden.deb
+        install: /tmp/bitwarden.deb
+      dnf:
+        pre:
+          - curl -fsSL https://vault.bitwarden.com/download/?app=desktop&platform=linux&variant=rpm -o /tmp/bitwarden.rpm
+        install: /tmp/bitwarden.rpm
+      brew:
+        install: --cask bitwarden
+
+  - name: calibre
+    description: E-book manager and converter
+    category: [desktop]
+    packages:
+      pacman:
+        install: calibre
+      yay:
+        install: calibre
+      apt:
+        install: calibre
+      dnf:
+        install: calibre
+      brew:
+        install: --cask calibre
+
+  - name: chrome
+    description: Google Chrome web browser
+    category: [desktop]
+    packages:
+      pacman:
+        install: ~
+      yay:
+        install: google-chrome
+      apt:
+        pre:
+          - curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-linux-signing-key.gpg
+          - echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-signing-key.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list
+          - apt-get update -y
+        install: google-chrome-stable
+      dnf:
+        pre:
+          - dnf config-manager --set-enabled google-chrome
+        install: google-chrome-stable
+      brew:
+        install: --cask google-chrome
+
+  - name: cursor
+    description: AI-powered code editor
+    category: [desktop]
+    packages:
+      pacman:
+        install: ~
+      yay:
+        install: cursor-bin
+      apt:
+        pre:
+          - curl -fsSL https://downloader.cursor.sh/linux/appImage/x64 -o /tmp/cursor.AppImage
+          - chmod +x /tmp/cursor.AppImage
+          - mv /tmp/cursor.AppImage /usr/local/bin/cursor
+        install: ~
+      dnf:
+        pre:
+          - curl -fsSL https://downloader.cursor.sh/linux/appImage/x64 -o /tmp/cursor.AppImage
+          - chmod +x /tmp/cursor.AppImage
+          - mv /tmp/cursor.AppImage /usr/local/bin/cursor
+        install: ~
+      brew:
+        install: --cask cursor
+
+  - name: gimp
+    description: GNU Image Manipulation Program
+    category: [desktop]
+    packages:
+      pacman:
+        install: gimp
+      yay:
+        install: gimp
+      apt:
+        install: gimp
+      dnf:
+        install: gimp
+      brew:
+        install: --cask gimp
+
+  - name: gnome-boxes
+    description: GNOME Boxes virtualization app
+    category: [desktop]
+    packages:
+      pacman:
+        install: gnome-boxes
+      yay:
+        install: gnome-boxes
+      apt:
+        install: gnome-boxes
+      dnf:
+        install: gnome-boxes
+      brew:
+        install: ~
+
+  - name: gufw
+    description: Graphical firewall manager (UFW frontend)
+    category: [desktop]
+    packages:
+      pacman:
+        install: gufw
+      yay:
+        install: gufw
+      apt:
+        install: gufw
+      dnf:
+        install: gufw
+      brew:
+        install: ~
+
+  - name: heroic-games-launcher
+    description: Native GOG and Epic Games launcher for Linux
+    category: [desktop]
+    packages:
+      pacman:
+        install: ~
+      yay:
+        install: heroic-games-launcher-bin
+      apt:
+        pre:
+          - HEROIC_VERSION=$(curl -s https://api.github.com/repos/Heroic-Games-Launcher/HeroicGamesLauncher/releases/latest | grep -oP '(?<="tag_name":\ "v)[^"]*')
+          - curl -Lo /tmp/heroic.deb "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/latest/download/heroic_${HEROIC_VERSION}_amd64.deb"
+        install: /tmp/heroic.deb
+      dnf:
+        pre:
+          - HEROIC_VERSION=$(curl -s https://api.github.com/repos/Heroic-Games-Launcher/HeroicGamesLauncher/releases/latest | grep -oP '(?<="tag_name":\ "v)[^"]*')
+          - curl -Lo /tmp/heroic.rpm "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/latest/download/heroic-${HEROIC_VERSION}.x86_64.rpm"
+        install: /tmp/heroic.rpm
+      brew:
+        install: --cask heroic
+
+  - name: kdenlive
+    description: Free and open-source video editor
+    category: [desktop]
+    packages:
+      pacman:
+        install: kdenlive
+      yay:
+        install: kdenlive
+      apt:
+        install: kdenlive
+      dnf:
+        install: kdenlive
+      brew:
+        install: --cask kdenlive
+
+  - name: lsfg-vk
+    description: Lossless Scaling frame generation for Vulkan
+    category: [desktop]
+    packages:
+      pacman:
+        install: ~
+      yay:
+        install: lsfg-vk
+      apt:
+        install: ~
+      dnf:
+        install: ~
+      brew:
+        install: ~
+
+  - name: lutris
+    description: Open gaming platform for Linux
+    category: [desktop]
+    packages:
+      pacman:
+        install: lutris
+      yay:
+        install: lutris
+      apt:
+        install: lutris
+      dnf:
+        install: lutris
+      brew:
+        install: ~
+
+  - name: pinta
+    description: Simple image editor
+    category: [desktop]
+    packages:
+      pacman:
+        install: pinta
+      yay:
+        install: pinta
+      apt:
+        install: pinta
+      dnf:
+        install: pinta
+      brew:
+        install: ~
+
+  - name: podman-desktop
+    description: Container management GUI for Podman
+    category: [desktop]
+    packages:
+      pacman:
+        install: podman-desktop
+      yay:
+        install: podman-desktop
+      apt:
+        pre:
+          - flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          - flatpak install -y flathub io.podman_desktop.PodmanDesktop
+        install: ~
+      dnf:
+        pre:
+          - flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          - flatpak install -y flathub io.podman_desktop.PodmanDesktop
+        install: ~
+      brew:
+        install: --cask podman-desktop
+
+  - name: protonplus
+    description: Proton-GE and Wine-GE version manager
+    category: [desktop]
+    packages:
+      pacman:
+        install: ~
+      yay:
+        install: protonplus
+      apt:
+        install: ~
+      dnf:
+        install: ~
+      brew:
+        install: ~
+
+  - name: steam
+    description: Gaming platform by Valve
+    category: [desktop]
+    packages:
+      pacman:
+        install: steam
+      yay:
+        install: steam
+      apt:
+        install: steam-installer
+      dnf:
+        pre:
+          - dnf config-manager --add-repo https://negativo17.org/repos/fedora-steam.repo
+        install: steam
+      brew:
+        install: ~
+
+  - name: tk
+    description: Tk GUI toolkit (Python plotting support)
+    category: [desktop]
+    packages:
+      pacman:
+        install: tk
+      yay:
+        install: tk
+      apt:
+        install: python3-tk
+      dnf:
+        install: python3-tkinter
+      brew:
+        install: python-tk
+
+  - name: xournal-app
+    description: Xournal++ note-taking and PDF annotation app
+    binary: xournalpp
+    category: [desktop]
+    packages:
+      pacman:
+        install: xournalpp
+      yay:
+        install: xournalpp
+      apt:
+        install: xournalpp
+      dnf:
+        install: xournalpp
+      brew:
+        install: --cask xournal++
