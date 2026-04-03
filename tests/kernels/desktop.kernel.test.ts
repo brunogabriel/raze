@@ -1,0 +1,55 @@
+import { describe, it, expect } from "bun:test"
+import { DesktopKernel } from "../../src/kernels/desktop/desktop.kernel"
+import { Logger } from "../../src/utils/logger"
+import type { RuntimeContext } from "../../src/kernels/base.kernel"
+
+const logger = new Logger({ verbose: false, dryRun: true })
+
+const desktopCtx: RuntimeContext = {
+  os: "linux",
+  distro: "arch",
+  packageManager: "pacman",
+  hasDesktop: true,
+  config: {
+    apps: [
+      {
+        name: "alacritty",
+        description: "Terminal emulator",
+        tags: ["desktop"],
+        packages: { pacman: { install: "alacritty" } },
+      },
+      {
+        name: "neovim",
+        description: "Editor",
+        tags: ["terminal"],
+        packages: { pacman: { install: "neovim" } },
+      },
+    ],
+  },
+}
+
+describe("DesktopKernel", () => {
+  it("canHandle returns true when hasDesktop is true", () => {
+    const kernel = new DesktopKernel(logger)
+    expect(kernel.canHandle(desktopCtx)).toBe(true)
+  })
+
+  it("canHandle returns false when hasDesktop is false", () => {
+    const kernel = new DesktopKernel(logger)
+    const ctx: RuntimeContext = { ...desktopCtx, hasDesktop: false }
+    expect(kernel.canHandle(ctx)).toBe(false)
+  })
+
+  it("execute completes without throwing in dry-run mode", async () => {
+    const kernel = new DesktopKernel(logger)
+    await expect(kernel.execute(desktopCtx)).resolves.toBeUndefined()
+  })
+
+  it("only processes desktop-tagged apps", async () => {
+    const processed: string[] = []
+    const kernel = new DesktopKernel(logger, { onAppProcessed: (n) => processed.push(n) })
+    await kernel.execute(desktopCtx)
+    expect(processed).toContain("alacritty")
+    expect(processed).not.toContain("neovim")
+  })
+})
