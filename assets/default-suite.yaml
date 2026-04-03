@@ -1,5 +1,5 @@
 # Raze default app suite
-# Tags: terminal | desktop | driver | optional
+# Categories: terminal | desktop | driver | optional
 # Each app may define packages per package manager.
 # Each package entry supports:
 #   pre: (optional) list of commands to run before install
@@ -14,19 +14,19 @@ apps:
 
   - name: curl
     description: Command-line tool for transferring data with URLs
-    tags: [terminal]
+    category: [terminal]
 
   - name: git
     description: Distributed version control system
-    tags: [terminal]
+    category: [terminal]
 
   - name: unzip
     description: Extraction utility for zip archives
-    tags: [terminal]
+    category: [terminal]
 
   - name: base-devel
     description: Base development tools (compilers, make, etc.)
-    tags: [terminal]
+    category: [terminal]
     packages:
       pacman:
         install: base-devel
@@ -44,7 +44,7 @@ apps:
   - name: neovim
     description: Modal text editor
     binary: nvim
-    tags: [terminal]
+    category: [terminal]
     packages:
       apt:
         pre:
@@ -53,28 +53,28 @@ apps:
 
   - name: tmux
     description: Terminal multiplexer
-    tags: [terminal]
+    category: [terminal]
 
   - name: zsh
     description: Z shell
-    tags: [terminal]
+    category: [terminal]
 
   - name: fzf
     description: Fuzzy finder
-    tags: [terminal]
+    category: [terminal]
 
   - name: ripgrep
     description: Fast grep alternative
     binary: rg
-    tags: [terminal]
+    category: [terminal]
 
   - name: bat
     description: cat with syntax highlighting
-    tags: [terminal]
+    category: [terminal]
 
   - name: eza
     description: Modern ls replacement
-    tags: [terminal]
+    category: [terminal]
     packages:
       apt:
         pre:
@@ -86,7 +86,7 @@ apps:
 
   - name: starship
     description: Cross-shell prompt
-    tags: [terminal]
+    category: [terminal]
     packages:
       apt:
         pre:
@@ -99,7 +99,7 @@ apps:
 
   - name: lazygit
     description: Terminal UI for git
-    tags: [terminal]
+    category: [terminal]
     packages:
       dnf:
         pre:
@@ -114,36 +114,36 @@ apps:
 
   - name: btop
     description: Resource monitor
-    tags: [terminal]
+    category: [terminal]
 
   - name: fastfetch
     description: Fast system information tool
-    tags: [terminal]
+    category: [terminal]
 
   - name: fd
     description: Simple, fast alternative to find
     binary: fd
-    tags: [terminal]
+    category: [terminal]
     packages:
       apt:
         install: fd-find
 
   - name: jq
     description: Command-line JSON processor
-    tags: [terminal]
+    category: [terminal]
 
   - name: tldr
     description: Simplified man pages
-    tags: [terminal]
+    category: [terminal]
 
   - name: zoxide
     description: Smarter cd command
-    tags: [terminal]
+    category: [terminal]
 
   - name: github-cli
     description: GitHub CLI
     binary: gh
-    tags: [terminal]
+    category: [terminal]
     packages:
       pacman:
         install: github-cli
@@ -166,7 +166,7 @@ apps:
 
   - name: lazydocker
     description: Terminal UI for Docker
-    tags: [terminal]
+    category: [terminal]
     packages:
       yay:
         install: lazydocker-bin
@@ -183,7 +183,7 @@ apps:
 
   - name: opencode
     description: AI coding assistant
-    tags: [terminal]
+    category: [terminal]
     packages:
       pacman:
         pre:
@@ -208,7 +208,7 @@ apps:
 
   - name: uv
     description: Fast Python package and project manager
-    tags: [terminal]
+    category: [terminal]
     packages:
       pacman:
         pre:
@@ -234,7 +234,7 @@ apps:
   - name: mise
     description: Dev tools and language version manager
     binary: mise
-    tags: [terminal]
+    category: [terminal]
     packages:
       pacman:
         install: mise
@@ -253,7 +253,7 @@ apps:
 
   - name: docker
     description: Container runtime
-    tags: [terminal]
+    category: [terminal]
     packages:
       pacman:
         post:
@@ -289,28 +289,28 @@ apps:
 
   - name: alacritty
     description: GPU-accelerated terminal emulator
-    tags: [desktop]
+    category: [desktop]
     packages:
       brew:
         install: --cask alacritty
 
   - name: firefox
     description: Web browser
-    tags: [desktop]
+    category: [desktop]
     packages:
       brew:
         install: --cask firefox
 
   - name: vlc
     description: Media player
-    tags: [desktop]
+    category: [desktop]
     packages:
       brew:
         install: --cask vlc
 
   - name: obsidian
     description: Knowledge base and note-taking
-    tags: [desktop]
+    category: [desktop]
     packages:
       yay:
         install: obsidian
@@ -332,7 +332,7 @@ apps:
 
   - name: brave
     description: Privacy-focused web browser
-    tags: [desktop]
+    category: [desktop]
     packages:
       pacman:
         install: brave-browser
@@ -354,7 +354,7 @@ apps:
   - name: vscode
     description: Visual Studio Code editor
     binary: code
-    tags: [desktop]
+    category: [desktop]
     packages:
       pacman:
         install: code
@@ -377,14 +377,14 @@ apps:
 
   - name: kitty
     description: GPU-accelerated terminal emulator
-    tags: [desktop]
+    category: [desktop]
     packages:
       brew:
         install: --cask kitty
 
   - name: jetbrains-toolbox
     description: JetBrains IDE manager
-    tags: [desktop]
+    category: [desktop]
     packages:
       pacman:
         install: jetbrains-toolbox
@@ -407,7 +407,7 @@ apps:
 
   - name: dbeaver
     description: Universal database client
-    tags: [desktop]
+    category: [desktop]
     packages:
       pacman:
         install: dbeaver-ce

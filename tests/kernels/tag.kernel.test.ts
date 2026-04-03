@@ -15,13 +15,13 @@ const ctx: RuntimeContext = {
       {
         name: "fake-terminal-app",
         description: "Fake terminal app for testing",
-        tags: ["terminal"],
+        category: ["terminal"],
         packages: { pacman: { install: "fake-terminal-app-xyz" } },
       },
       {
         name: "fake-desktop-app",
         description: "Fake desktop app for testing",
-        tags: ["desktop"],
+        category: ["desktop"],
         packages: { pacman: { install: "fake-desktop-app-xyz" } },
       },
     ],
@@ -69,13 +69,13 @@ describe("TagKernel", () => {
           {
             name: "will-fail",
             description: "Fails on install",
-            tags: ["terminal"],
+            category: ["terminal"],
             packages: { pacman: { install: "this-package-does-not-exist-xyz" } },
           },
           {
             name: "will-succeed",
             description: "Succeeds (dry-run via null install)",
-            tags: ["terminal"],
+            category: ["terminal"],
             packages: { pacman: { install: null } },
           },
         ],
@@ -102,13 +102,13 @@ describe("TagKernel", () => {
           {
             name: "app-a",
             description: "Fails",
-            tags: ["terminal"],
+            category: ["terminal"],
             packages: { pacman: { install: "nonexistent-app-a" } },
           },
           {
             name: "app-b",
             description: "Fails",
-            tags: ["terminal"],
+            category: ["terminal"],
             packages: { pacman: { install: "nonexistent-app-b" } },
           },
         ],
@@ -128,7 +128,7 @@ describe("TagKernel", () => {
           {
             name: "myapp",
             description: "App with known binary",
-            tags: ["terminal"],
+            category: ["terminal"],
             binary: "sh",
             packages: { pacman: { install: "myapp" } },
           },
@@ -152,7 +152,7 @@ describe("TagKernel", () => {
           {
             name: "bash",
             description: "Already installed shell",
-            tags: ["terminal"],
+            category: ["terminal"],
             packages: { pacman: { install: "bash" } },
           },
         ],

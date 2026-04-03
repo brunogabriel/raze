@@ -15,13 +15,13 @@ const archCtx: RuntimeContext = {
       {
         name: "nvidia-driver",
         description: "NVIDIA driver",
-        tags: ["driver"],
+        category: ["driver"],
         packages: { pacman: { install: "nvidia" } },
       },
       {
         name: "neovim",
         description: "Editor",
-        tags: ["terminal"],
+        category: ["terminal"],
         packages: { pacman: { install: "neovim" } },
       },
     ],

@@ -15,13 +15,13 @@ const desktopCtx: RuntimeContext = {
       {
         name: "fake-desktop-app",
         description: "Fake desktop app for testing",
-        tags: ["desktop"],
+        category: ["desktop"],
         packages: { pacman: { install: "fake-desktop-app-xyz" } },
       },
       {
         name: "fake-terminal-app",
         description: "Fake terminal app for testing",
-        tags: ["terminal"],
+        category: ["terminal"],
         packages: { pacman: { install: "fake-terminal-app-xyz" } },
       },
     ],

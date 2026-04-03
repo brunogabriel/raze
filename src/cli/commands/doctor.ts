@@ -52,7 +52,7 @@ export function registerDoctor(program: Command, buildContext: BuildContextFn): 
 
         const status = installed ? "installed" : "missing"
         const icon = installed ? "✓" : "✗"
-        const tags = app.tags.join(", ")
+        const tags = app.category.join(", ")
         console.log(`  ${icon} ${app.name.padEnd(20)} ${tags.padEnd(16)} ${status}`)
       }
     })

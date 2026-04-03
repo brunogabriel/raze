@@ -28,7 +28,7 @@ export abstract class TagKernel implements IKernel {
 
   async execute(ctx: RuntimeContext): Promise<void> {
     const pm = ctx.packageManager as Exclude<PackageManager, "unknown">
-    const apps = ctx.config.apps.filter((a) => a.tags.includes(this.tag))
+    const apps = ctx.config.apps.filter((a) => a.category.includes(this.tag))
     const dryRun = this.logger.isDryRun
     const failures: { name: string; reason: string }[] = []
 

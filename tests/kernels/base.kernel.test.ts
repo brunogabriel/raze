@@ -39,7 +39,7 @@ describe("AppDefinition types", () => {
     const app: AppDefinition = {
       name: "ripgrep",
       description: "Fast grep alternative",
-      tags: ["terminal"],
+      category: ["terminal"],
       packages: { pacman: { install: "ripgrep" } },
       binary: "rg",
     }
@@ -50,7 +50,7 @@ describe("AppDefinition types", () => {
     const app: AppDefinition = {
       name: "neovim",
       description: "Editor",
-      tags: ["terminal"],
+      category: ["terminal"],
       packages: { pacman: { install: "neovim" } },
     }
     expect(app.binary).toBeUndefined()

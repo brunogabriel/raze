@@ -12,13 +12,13 @@ describe("loadConfig", () => {
 
   it("default suite has at least one terminal app", async () => {
     const config = await loadConfig("/nonexistent/path/suite.yaml")
-    const terminalApps = config.apps.filter((a) => a.tags.includes("terminal"))
+    const terminalApps = config.apps.filter((a) => a.category.includes("terminal"))
     expect(terminalApps.length).toBeGreaterThan(0)
   })
 
   it("default suite has at least one desktop app", async () => {
     const config = await loadConfig("/nonexistent/path/suite.yaml")
-    const desktopApps = config.apps.filter((a) => a.tags.includes("desktop"))
+    const desktopApps = config.apps.filter((a) => a.category.includes("desktop"))
     expect(desktopApps.length).toBeGreaterThan(0)
   })
 
@@ -40,7 +40,7 @@ describe("loadConfig", () => {
 apps:
   - name: neovim
     description: My custom neovim
-    tags: [terminal]
+    category: [terminal]
     packages:
       apt:
         install: neovim-nightly
@@ -69,7 +69,7 @@ apps:
 apps:
   - name: mytool
     description: Test tool
-    tags: [terminal]
+    category: [terminal]
 `)
     const config = await loadConfig(overridePath)
     const app = config.apps.find((a) => a.name === "mytool")
@@ -89,7 +89,7 @@ apps:
 apps:
   - name: mytool2
     description: Test tool 2
-    tags: [terminal]
+    category: [terminal]
     packages:
       apt:
         pre:

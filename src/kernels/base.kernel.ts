@@ -12,7 +12,7 @@ export interface PackageSteps {
 export interface AppDefinition {
   name: string
   description: string
-  tags: AppTag[]
+  category: AppTag[]
   packages: Partial<Record<Exclude<PackageManager, "unknown">, PackageSteps>>
   binary?: string
 }

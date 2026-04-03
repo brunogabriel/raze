@@ -11,7 +11,7 @@ export class DriverKernel extends TagKernel {
   }
 
   canHandle(ctx: RuntimeContext): boolean {
-    return ctx.config.apps.some((a) => a.tags.includes("driver"))
+    return ctx.config.apps.some((a) => a.category.includes("driver"))
   }
 
   protected override installMessage(name: string): string {
