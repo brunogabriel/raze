@@ -35,14 +35,15 @@ export abstract class TagKernel implements IKernel {
     for (const app of apps) {
       const steps = app.packages[pm]
 
-      if (!steps) {
-        this.logger.warn(`Skipping ${app.name}: no entry for ${pm}`)
+      if (await isAppInstalled(app, pm)) {
+        this.logger.info(`Already installed: ${app.name}`)
         this.options.onAppSkipped?.(app.name)
         continue
       }
 
-      if (await isAppInstalled(app, pm)) {
-        this.logger.info(`Already installed: ${app.name}`)
+
+      if (!steps) {
+        this.logger.warn(`Skipping ${app.name}: no entry for ${pm}`)
         this.options.onAppSkipped?.(app.name)
         continue
       }

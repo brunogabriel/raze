@@ -38,7 +38,12 @@ export async function isAppInstalled(
     return isBinaryInstalled(app.binary)
   }
   const pkgName = app.packages[pm]?.install ?? app.name
+
   if (!pkgName) return false
-  const result = await runCommand(`${CHECK_COMMANDS[pm]} ${pkgName}`, { dryRun: false, stream: false })
-  return result.success
+
+  const [checkResult, isBinary] = await Promise.all([
+    runCommand(`${CHECK_COMMANDS[pm]} ${pkgName}`, { dryRun: false, stream: false }),
+    isBinaryInstalled(pkgName),
+  ])
+  return checkResult.success || isBinary
 }

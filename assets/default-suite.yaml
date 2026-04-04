@@ -483,6 +483,7 @@ apps:
 
   - name: dbeaver-ce
     description: Universal database client
+    binary: dbeaver
     category: [desktop]
     packages:
       apt:
